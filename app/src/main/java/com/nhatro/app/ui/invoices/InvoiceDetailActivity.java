@@ -1,15 +1,19 @@
 package com.nhatro.app.ui.invoices;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nhatro.app.R;
 import com.nhatro.app.data.model.Invoice;
@@ -19,6 +23,8 @@ import com.nhatro.app.ui.adapters.InvoiceItemAdapter;
 import com.nhatro.app.ui.adapters.PaymentAdapter;
 import com.nhatro.app.utils.CurrencyUtils;
 import com.nhatro.app.utils.DateUtils;
+import com.nhatro.app.utils.InvoiceExportHelper;
+import com.nhatro.app.utils.SharedPrefsHelper;
 import com.nhatro.app.viewmodel.InvoiceViewModel;
 import com.nhatro.app.viewmodel.PaymentViewModel;
 
@@ -42,6 +48,19 @@ public class InvoiceDetailActivity extends AppCompatActivity {
         paymentViewModel = new ViewModelProvider(this).get(PaymentViewModel.class);
 
         binding.toolbar.setNavigationOnClickListener(v -> finish());
+        binding.toolbar.inflateMenu(R.menu.menu_invoice_detail);
+        binding.toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_share) {
+                showExportDialog();
+                return true;
+            } else if (item.getItemId() == R.id.action_print) {
+                if (currentInvoice != null) {
+                    InvoiceExportHelper.printOrSavePdf(this, currentInvoice);
+                }
+                return true;
+            }
+            return false;
+        });
 
         invoiceId = getIntent().getLongExtra("invoice_id", -1);
         if (invoiceId == -1) {
@@ -52,6 +71,12 @@ public class InvoiceDetailActivity extends AppCompatActivity {
         setupRecyclerViews();
         loadInvoice();
 
+        binding.btnExportInvoice.setOnClickListener(v -> showExportDialog());
+        binding.btnPrintInvoice.setOnClickListener(v -> {
+            if (currentInvoice != null) {
+                InvoiceExportHelper.printOrSavePdf(this, currentInvoice);
+            }
+        });
         binding.btnAddPayment.setOnClickListener(v -> showAddPaymentDialog());
     }
 
@@ -151,5 +176,86 @@ public class InvoiceDetailActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
+    }
+
+    private void showExportDialog() {
+        if (currentInvoice == null) {
+            Toast.makeText(this, "Đang tải dữ liệu hóa đơn, vui lòng đợi...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_export_invoice, null);
+            com.google.android.material.bottomsheet.BottomSheetDialog dialog =
+                    new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+            dialog.setContentView(dialogView);
+
+            TextView tvTitle = dialogView.findViewById(R.id.tvExportTitle);
+            TextView tvPreview = dialogView.findViewById(R.id.tvInvoicePreviewText);
+            TextInputEditText etBankName = dialogView.findViewById(R.id.etExportBankName);
+            TextInputEditText etBankAccount = dialogView.findViewById(R.id.etExportBankAccount);
+            TextInputEditText etBankOwner = dialogView.findViewById(R.id.etExportBankOwner);
+            MaterialButton btnShare = dialogView.findViewById(R.id.btnShareText);
+            MaterialButton btnCopy = dialogView.findViewById(R.id.btnCopyText);
+            MaterialButton btnPrint = dialogView.findViewById(R.id.btnPrintPdf);
+            MaterialButton btnClose = dialogView.findViewById(R.id.btnCloseDialog);
+
+            tvTitle.setText("Xuất Hóa Đơn - Phòng " + currentInvoice.getRoomCode());
+
+            SharedPrefsHelper prefs = SharedPrefsHelper.getInstance(this);
+            etBankName.setText(prefs.getBankName());
+            etBankAccount.setText(prefs.getBankAccount());
+            etBankOwner.setText(prefs.getBankOwner());
+
+            Runnable updatePreview = () -> {
+                String bName = etBankName.getText() != null ? etBankName.getText().toString().trim() : "";
+                String bAcc = etBankAccount.getText() != null ? etBankAccount.getText().toString().trim() : "";
+                String bOwn = etBankOwner.getText() != null ? etBankOwner.getText().toString().trim() : "";
+                prefs.saveBankInfo(bName, bAcc, bOwn);
+                tvPreview.setText(InvoiceExportHelper.generateShareText(this, currentInvoice));
+            };
+
+            TextWatcher watcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                @Override
+                public void afterTextChanged(Editable s) {
+                    updatePreview.run();
+                }
+            };
+
+            etBankName.addTextChangedListener(watcher);
+            etBankAccount.addTextChangedListener(watcher);
+            etBankOwner.addTextChangedListener(watcher);
+
+            // Hiển thị nội dung xem trước ban đầu
+            tvPreview.setText(InvoiceExportHelper.generateShareText(this, currentInvoice));
+
+            btnShare.setOnClickListener(v -> {
+                updatePreview.run();
+                InvoiceExportHelper.shareInvoice(this, currentInvoice);
+                dialog.dismiss();
+            });
+
+            btnCopy.setOnClickListener(v -> {
+                updatePreview.run();
+                InvoiceExportHelper.copyToClipboard(this, currentInvoice);
+            });
+
+            btnPrint.setOnClickListener(v -> {
+                updatePreview.run();
+                InvoiceExportHelper.printOrSavePdf(this, currentInvoice);
+                dialog.dismiss();
+            });
+
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+
+            dialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi mở hộp thoại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }

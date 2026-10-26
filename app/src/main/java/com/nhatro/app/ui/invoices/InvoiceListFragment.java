@@ -53,6 +53,9 @@ public class InvoiceListFragment extends Fragment {
             intent.putExtra("invoice_id", invoice.getId());
             startActivity(intent);
         });
+        adapter.setOnInvoiceShareListener(invoice -> {
+            com.nhatro.app.utils.InvoiceExportHelper.shareInvoice(requireContext(), invoice);
+        });
 
         binding.rvInvoices.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvInvoices.setAdapter(adapter);

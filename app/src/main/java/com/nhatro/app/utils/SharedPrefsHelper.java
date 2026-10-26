@@ -56,6 +56,30 @@ public class SharedPrefsHelper {
         return prefs.getString(Constants.KEY_SERVER_URL, Constants.DEFAULT_BASE_URL);
     }
 
+    public void saveBankInfo(String bankName, String bankAccount, String bankOwner) {
+        prefs.edit()
+                .putString(Constants.KEY_BANK_NAME, bankName)
+                .putString(Constants.KEY_BANK_ACCOUNT, bankAccount)
+                .putString(Constants.KEY_BANK_OWNER, bankOwner)
+                .apply();
+    }
+
+    public String getBankName() {
+        return prefs.getString(Constants.KEY_BANK_NAME, "");
+    }
+
+    public String getBankAccount() {
+        return prefs.getString(Constants.KEY_BANK_ACCOUNT, "");
+    }
+
+    public String getBankOwner() {
+        String owner = prefs.getString(Constants.KEY_BANK_OWNER, "");
+        if (owner.isEmpty()) {
+            return getUserName();
+        }
+        return owner;
+    }
+
     public void clear() {
         String savedServer = getServerUrl();
         prefs.edit().clear().apply();

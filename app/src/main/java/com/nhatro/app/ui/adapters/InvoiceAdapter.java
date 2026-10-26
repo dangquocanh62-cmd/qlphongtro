@@ -21,8 +21,18 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceV
         void onInvoiceClick(Invoice invoice);
     }
 
+    public interface OnInvoiceShareListener {
+        void onInvoiceShare(Invoice invoice);
+    }
+
+    private OnInvoiceShareListener shareListener;
+
     public void setOnInvoiceClickListener(OnInvoiceClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnInvoiceShareListener(OnInvoiceShareListener shareListener) {
+        this.shareListener = shareListener;
     }
 
     public void setInvoices(List<Invoice> invoices) {
@@ -58,6 +68,18 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceV
                 int pos = getAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && listener != null) {
                     listener.onInvoiceClick(invoices.get(pos));
+                }
+            });
+
+            binding.btnQuickShare.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    Invoice inv = invoices.get(pos);
+                    if (shareListener != null) {
+                        shareListener.onInvoiceShare(inv);
+                    } else {
+                        com.nhatro.app.utils.InvoiceExportHelper.shareInvoice(itemView.getContext(), inv);
+                    }
                 }
             });
         }

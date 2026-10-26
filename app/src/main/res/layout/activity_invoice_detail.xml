@@ -253,15 +253,47 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Export Invoice Button (Zalo / SMS / Messenger) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExportInvoice"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/primary"
+                android:text="📤 Gửi Hóa Đơn Cho Khách (Zalo / SMS)"
+                android:textColor="@color/text_white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_share"
+                app:iconTint="@color/text_white"
+                app:cornerRadius="12dp" />
+
+            <!-- Print / PDF Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPrintInvoice"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:text="📄 In / Lưu Phiếu Thu Dạng PDF"
+                android:textColor="@color/primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_print"
+                app:iconTint="@color/primary"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="1.5dp"
+                app:cornerRadius="12dp" />
+
             <!-- Add Payment Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddPayment"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/status_paid_text"
                 android:text="💰 Ghi Nhận Thanh Toán"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 app:cornerRadius="12dp" />
 

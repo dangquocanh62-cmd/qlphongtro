@@ -13,8 +13,11 @@ public class CurrencyUtils {
     }
 
     public static String formatVND(Long amount) {
-        if (amount == null) return "0 đ";
-        return formatVND(amount.longValue());
+        long val = (amount != null) ? amount.longValue() : 0L;
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+        symbols.setGroupingSeparator('.');
+        DecimalFormat formatter = new DecimalFormat("#,###", symbols);
+        return formatter.format(val) + " đ";
     }
 
     public static String formatVND(double amount) {

@@ -10,6 +10,9 @@ public class Constants {
     public static final String KEY_USER_NAME = "key_user_name";
     public static final String KEY_USER_ROLE = "key_user_role";
     public static final String KEY_SERVER_URL = "key_server_url";
+    public static final String KEY_BANK_NAME = "key_bank_name";
+    public static final String KEY_BANK_ACCOUNT = "key_bank_account";
+    public static final String KEY_BANK_OWNER = "key_bank_owner";
 
     // Trạng thái phòng
     public static final String STATUS_AVAILABLE = "AVAILABLE";
