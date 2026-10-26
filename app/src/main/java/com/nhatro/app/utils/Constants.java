@@ -1,8 +1,8 @@
 package com.nhatro.app.utils;
 
 public class Constants {
-    // 10.0.2.2 là địa chỉ localhost của máy chủ khi chạy trên Android Emulator
-    public static final String DEFAULT_BASE_URL = "http://10.0.2.2:3000/api/";
+    // Máy chủ Cloud Render 24/7
+    public static final String DEFAULT_BASE_URL = "https://qlphongtro-2y3o.onrender.com/api/";
     
     public static final String PREF_NAME = "QLPhongTroPrefs";
     public static final String KEY_TOKEN = "key_token";
