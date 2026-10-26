@@ -36,11 +36,13 @@ public class SharedPrefsHelper {
     }
 
     public String getUserName() {
-        return prefs.getString(Constants.KEY_USER_NAME, "Quản trị viên");
+        String name = prefs.getString(Constants.KEY_USER_NAME, "Quản trị viên");
+        return name != null ? name : "Quản trị viên";
     }
 
     public String getUserRole() {
-        return prefs.getString(Constants.KEY_USER_ROLE, "OWNER");
+        String role = prefs.getString(Constants.KEY_USER_ROLE, "OWNER");
+        return role != null ? role : "OWNER";
     }
 
     public void saveServerUrl(String url) {

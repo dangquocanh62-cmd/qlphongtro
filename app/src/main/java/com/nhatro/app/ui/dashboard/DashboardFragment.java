@@ -43,9 +43,10 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setupUserInfo() {
+        if (!isAdded() || binding == null) return;
         SharedPrefsHelper prefs = SharedPrefsHelper.getInstance(requireContext());
         binding.tvWelcomeUser.setText("Xin chào, " + prefs.getUserName());
-        binding.tvUserRole.setText("Vai trò: " + (prefs.getUserRole().equals("OWNER") ? "Chủ nhà trọ (OWNER)" : "Quản lý (MANAGER)"));
+        binding.tvUserRole.setText("Vai trò: " + ("OWNER".equalsIgnoreCase(prefs.getUserRole()) ? "Chủ nhà trọ (OWNER)" : "Quản lý (MANAGER)"));
     }
 
     private void setupListeners() {
@@ -69,8 +70,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void loadStats() {
+        if (!isAdded() || binding == null) return;
         viewModel.getDashboardStats().observe(getViewLifecycleOwner(), resource -> {
-            if (resource == null) return;
+            if (resource == null || binding == null) return;
 
             binding.swipeRefresh.setRefreshing(resource.isLoading());
 
@@ -85,7 +87,9 @@ public class DashboardFragment extends Fragment {
                 binding.tvActiveContracts.setText(String.format("• Hợp đồng đang hiệu lực: %d hợp đồng", stats.getActiveContracts()));
                 binding.tvTotalTenants.setText(String.format("• Tổng số khách thuê đang quản lý: %d người", stats.getTotalTenants()));
             } else if (resource.isError()) {
-                Toast.makeText(requireContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+                if (getContext() != null) {
+                    Toast.makeText(requireContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -93,7 +97,9 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadStats();
+        if (isAdded() && binding != null) {
+            setupUserInfo();
+        }
     }
 
     @Override

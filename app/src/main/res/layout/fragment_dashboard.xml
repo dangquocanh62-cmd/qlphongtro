@@ -64,7 +64,7 @@
                         android:layout_centerVertical="true"
                         android:background="@drawable/bg_icon_circle_blue"
                         android:padding="8dp"
-                        android:src="@drawable/ic_app_logo"
+                        app:srcCompat="@drawable/ic_app_logo"
                         android:contentDescription="@string/app_name" />
                 </RelativeLayout>
             </LinearLayout>
@@ -134,7 +134,7 @@
                                     android:layout_alignParentEnd="true"
                                     android:background="@drawable/bg_icon_circle_green"
                                     android:padding="6dp"
-                                    android:src="@drawable/ic_rooms"
+                                    app:srcCompat="@drawable/ic_rooms"
                                     app:tint="@color/status_available_text"
                                     android:contentDescription="Phòng trống" />
                             </RelativeLayout>
@@ -197,7 +197,7 @@
                                     android:layout_alignParentEnd="true"
                                     android:background="@drawable/bg_icon_circle_blue"
                                     android:padding="6dp"
-                                    android:src="@drawable/ic_tenants"
+                                    app:srcCompat="@drawable/ic_tenants"
                                     app:tint="@color/primary"
                                     android:contentDescription="Đang thuê" />
                             </RelativeLayout>
@@ -280,7 +280,7 @@
                                     android:layout_alignParentEnd="true"
                                     android:background="@drawable/bg_icon_circle_green"
                                     android:padding="6dp"
-                                    android:src="@drawable/ic_trending_up"
+                                    app:srcCompat="@drawable/ic_trending_up"
                                     app:tint="@color/status_paid_text"
                                     android:contentDescription="Đã thu" />
                             </RelativeLayout>
@@ -343,7 +343,7 @@
                                     android:layout_alignParentEnd="true"
                                     android:background="@drawable/bg_icon_circle_rose"
                                     android:padding="6dp"
-                                    android:src="@drawable/ic_money"
+                                    app:srcCompat="@drawable/ic_money"
                                     app:tint="@color/status_unpaid_text"
                                     android:contentDescription="Chưa thu" />
                             </RelativeLayout>
@@ -390,7 +390,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnQuickMeter"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
                         android:layout_weight="1"
@@ -427,7 +427,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnQuickService"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
                         android:layout_weight="1"
@@ -442,7 +442,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnQuickAddRoom"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
                         android:layout_weight="1"

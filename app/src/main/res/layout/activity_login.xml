@@ -27,7 +27,7 @@
             <ImageView
                 android:layout_width="84dp"
                 android:layout_height="84dp"
-                android:src="@drawable/ic_app_logo"
+                app:srcCompat="@drawable/ic_app_logo"
                 android:contentDescription="@string/app_name" />
 
             <TextView
@@ -86,7 +86,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilEmail"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
@@ -109,7 +109,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPassword"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -118,7 +118,7 @@
                     app:boxCornerRadiusBottomStart="14dp"
                     app:boxCornerRadiusTopEnd="14dp"
                     app:boxCornerRadiusTopStart="14dp"
-                    app:passwordToggleEnabled="true"
+                    app:endIconMode="password_toggle"
                     app:startIconDrawable="@drawable/ic_contracts"
                     app:startIconTint="@color/primary">
 
@@ -185,7 +185,7 @@
         <!-- Config Server URL Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfigServer"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

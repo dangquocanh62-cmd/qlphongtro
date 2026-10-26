@@ -24,7 +24,7 @@
             android:layout_height="44dp"
             android:background="@drawable/bg_icon_circle_amber"
             android:padding="10dp"
-            android:src="@drawable/ic_electric"
+            app:srcCompat="@drawable/ic_electric"
             app:tint="@color/icon_electric"
             android:contentDescription="Dịch vụ" />
 
