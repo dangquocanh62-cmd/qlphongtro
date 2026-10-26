@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 exports.getInvoices = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { status, contractId, month, year } = req.query;
 
     if (db.isConnected) {
@@ -14,9 +15,9 @@ exports.getInvoices = async (req, res) => {
         JOIN contracts c ON i.contract_id = c.id
         JOIN rooms r ON c.room_id = r.id
         JOIN tenants t ON c.tenant_id = t.id
-        WHERE 1=1
+        WHERE i.user_id = $1
       `;
-      const params = [];
+      const params = [userId];
       if (status) {
         params.push(status);
         query += ` AND i.status = $${params.length}`;
@@ -37,7 +38,7 @@ exports.getInvoices = async (req, res) => {
       const result = await db.query(query, params);
       return res.json({ success: true, data: result.rows });
     } else {
-      let invoices = [...db.memoryStore.invoices];
+      let invoices = db.memoryStore.invoices.filter(i => (i.user_id || 1) === userId);
       if (status) invoices = invoices.filter(i => i.status === status);
       if (contractId) invoices = invoices.filter(i => i.contract_id === parseInt(contractId, 10));
       if (month) invoices = invoices.filter(i => i.month === parseInt(month, 10));
@@ -70,6 +71,7 @@ exports.getInvoices = async (req, res) => {
 
 exports.getInvoiceById = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
 
     if (db.isConnected) {
@@ -81,8 +83,8 @@ exports.getInvoiceById = async (req, res) => {
         JOIN contracts c ON i.contract_id = c.id
         JOIN rooms r ON c.room_id = r.id
         JOIN tenants t ON c.tenant_id = t.id
-        WHERE i.id = $1
-      `, [id]);
+        WHERE i.id = $1 AND i.user_id = $2
+      `, [id, userId]);
       if (invoiceRes.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy hóa đơn' });
       }
@@ -98,7 +100,7 @@ exports.getInvoiceById = async (req, res) => {
 
       return res.json({ success: true, data: invoice });
     } else {
-      const invoice = db.memoryStore.invoices.find(i => i.id === id);
+      const invoice = db.memoryStore.invoices.find(i => i.id === id && (i.user_id || 1) === userId);
       if (!invoice) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy hóa đơn' });
       }
@@ -132,6 +134,7 @@ exports.getInvoiceById = async (req, res) => {
 
 exports.createInvoice = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { contract_id, month, year, due_date, items } = req.body;
     if (!contract_id || !month || !year || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp hợp đồng, tháng, năm và danh sách các mục chi phí' });
@@ -140,19 +143,25 @@ exports.createInvoice = async (req, res) => {
     const totalAmount = items.reduce((sum, item) => sum + (Number(item.quantity || 1) * Number(item.unit_price || 0)), 0);
 
     if (db.isConnected) {
+      // Check contract belongs to user
+      const cCheck = await db.query('SELECT id FROM contracts WHERE id = $1 AND user_id = $2', [contract_id, userId]);
+      if (cCheck.rows.length === 0) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy hợp đồng thuộc quyền quản lý của bạn' });
+      }
+
       // Check existing invoice for this contract and month/year
       const existing = await db.query(
-        'SELECT id FROM invoices WHERE contract_id = $1 AND month = $2 AND year = $3',
-        [contract_id, month, year]
+        'SELECT id FROM invoices WHERE contract_id = $1 AND month = $2 AND year = $3 AND user_id = $4',
+        [contract_id, month, year, userId]
       );
       if (existing.rows.length > 0) {
         return res.status(400).json({ success: false, message: `Hóa đơn tháng ${month}/${year} cho hợp đồng này đã tồn tại` });
       }
 
       const invRes = await db.query(
-        `INSERT INTO invoices (contract_id, month, year, total_amount, status, due_date)
-         VALUES ($1, $2, $3, $4, 'UNPAID', $5) RETURNING *`,
-        [contract_id, month, year, totalAmount, due_date || null]
+        `INSERT INTO invoices (user_id, contract_id, month, year, total_amount, status, due_date)
+         VALUES ($1, $2, $3, $4, $5, 'UNPAID', $6) RETURNING *`,
+        [userId, contract_id, month, year, totalAmount, due_date || null]
       );
       const invoice = invRes.rows[0];
 
@@ -167,8 +176,13 @@ exports.createInvoice = async (req, res) => {
 
       return res.status(201).json({ success: true, message: 'Tạo hóa đơn thành công', data: invoice });
     } else {
+      const contract = db.memoryStore.contracts.find(c => c.id === parseInt(contract_id, 10) && (c.user_id || 1) === userId);
+      if (!contract) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy hợp đồng thuộc quyền quản lý của bạn' });
+      }
+
       const existing = db.memoryStore.invoices.find(
-        i => i.contract_id === parseInt(contract_id, 10) && i.month === parseInt(month, 10) && i.year === parseInt(year, 10)
+        i => (i.user_id || 1) === userId && i.contract_id === parseInt(contract_id, 10) && i.month === parseInt(month, 10) && i.year === parseInt(year, 10)
       );
       if (existing) {
         return res.status(400).json({ success: false, message: `Hóa đơn tháng ${month}/${year} cho hợp đồng này đã tồn tại` });
@@ -177,6 +191,7 @@ exports.createInvoice = async (req, res) => {
       const newId = db.memoryStore.invoices.length > 0 ? Math.max(...db.memoryStore.invoices.map(i => i.id)) + 1 : 1;
       const invoice = {
         id: newId,
+        user_id: userId,
         contract_id: parseInt(contract_id, 10),
         month: parseInt(month, 10),
         year: parseInt(year, 10),
@@ -209,6 +224,7 @@ exports.createInvoice = async (req, res) => {
 // Tự động tạo hóa đơn theo hợp đồng và chỉ số tháng hiện tại
 exports.generateMonthlyInvoice = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { contract_id, month, year, due_date } = req.body;
     if (!contract_id || !month || !year) {
       return res.status(400).json({ success: false, message: 'Vui lòng chọn hợp đồng, tháng và năm tính tiền' });
@@ -223,24 +239,24 @@ exports.generateMonthlyInvoice = async (req, res) => {
     let meterReadings = [];
 
     if (db.isConnected) {
-      const cRes = await db.query('SELECT * FROM contracts WHERE id = $1', [contract_id]);
+      const cRes = await db.query('SELECT * FROM contracts WHERE id = $1 AND user_id = $2', [contract_id, userId]);
       if (cRes.rows.length === 0) return res.status(404).json({ success: false, message: 'Không tìm thấy hợp đồng' });
       contract = cRes.rows[0];
 
-      const rRes = await db.query('SELECT * FROM rooms WHERE id = $1', [contract.room_id]);
+      const rRes = await db.query('SELECT * FROM rooms WHERE id = $1 AND user_id = $2', [contract.room_id, userId]);
       room = rRes.rows[0];
 
-      const sRes = await db.query('SELECT * FROM services');
+      const sRes = await db.query('SELECT * FROM services WHERE user_id = $1', [userId]);
       services = sRes.rows;
 
-      const mrRes = await db.query('SELECT * FROM meter_readings WHERE room_id = $1 AND month = $2 AND year = $3', [contract.room_id, m, y]);
+      const mrRes = await db.query('SELECT * FROM meter_readings WHERE room_id = $1 AND month = $2 AND year = $3 AND user_id = $4', [contract.room_id, m, y, userId]);
       meterReadings = mrRes.rows;
     } else {
-      contract = db.memoryStore.contracts.find(c => c.id === parseInt(contract_id, 10));
+      contract = db.memoryStore.contracts.find(c => c.id === parseInt(contract_id, 10) && (c.user_id || 1) === userId);
       if (!contract) return res.status(404).json({ success: false, message: 'Không tìm thấy hợp đồng' });
-      room = db.memoryStore.rooms.find(r => r.id === contract.room_id);
-      services = db.memoryStore.services;
-      meterReadings = db.memoryStore.meter_readings.filter(mr => mr.room_id === contract.room_id && mr.month === m && mr.year === y);
+      room = db.memoryStore.rooms.find(r => r.id === contract.room_id && (r.user_id || 1) === userId);
+      services = db.memoryStore.services.filter(s => (s.user_id || 1) === userId);
+      meterReadings = db.memoryStore.meter_readings.filter(mr => (mr.user_id || 1) === userId && mr.room_id === contract.room_id && mr.month === m && mr.year === y);
     }
 
     // Xây dựng danh sách các mục chi phí (invoice_items)
@@ -280,6 +296,7 @@ exports.generateMonthlyInvoice = async (req, res) => {
 
     // Lưu hóa đơn
     const reqWrapper = {
+      user: req.user,
       body: {
         contract_id,
         month: m,
@@ -296,12 +313,16 @@ exports.generateMonthlyInvoice = async (req, res) => {
 
 exports.deleteInvoice = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     if (db.isConnected) {
-      await db.query('DELETE FROM invoices WHERE id = $1', [id]);
+      const result = await db.query('DELETE FROM invoices WHERE id = $1 AND user_id = $2', [id, userId]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy hóa đơn' });
+      }
       return res.json({ success: true, message: 'Xóa hóa đơn thành công' });
     } else {
-      const idx = db.memoryStore.invoices.findIndex(i => i.id === id);
+      const idx = db.memoryStore.invoices.findIndex(i => i.id === id && (i.user_id || 1) === userId);
       if (idx === -1) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy hóa đơn' });
       }

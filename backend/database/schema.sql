@@ -15,23 +15,26 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. BẢNG ROOMS (Danh sách phòng trọ)
+-- 2. BẢNG ROOMS (Danh sách phòng trọ theo tài khoản chủ trọ)
 CREATE TABLE IF NOT EXISTS rooms (
     id BIGSERIAL PRIMARY KEY,
-    room_code VARCHAR(20) NOT NULL UNIQUE,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    room_code VARCHAR(20) NOT NULL,
     floor INT,
     area NUMERIC(6,2),
     price NUMERIC(12,0) NOT NULL CHECK (price >= 0),
     status VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE' CHECK (status IN ('AVAILABLE', 'OCCUPIED', 'MAINTENANCE')),
-    note TEXT
+    note TEXT,
+    CONSTRAINT uq_rooms_user_room_code UNIQUE (user_id, room_code)
 );
 
--- 3. BẢNG TENANTS (Danh sách khách thuê)
+-- 3. BẢNG TENANTS (Danh sách khách thuê theo tài khoản chủ trọ)
 CREATE TABLE IF NOT EXISTS tenants (
     id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     full_name VARCHAR(100) NOT NULL,
     phone VARCHAR(15),
-    id_card VARCHAR(20) UNIQUE,
+    id_card VARCHAR(20),
     birth_date DATE,
     hometown VARCHAR(255),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -40,6 +43,7 @@ CREATE TABLE IF NOT EXISTS tenants (
 -- 4. BẢNG CONTRACTS (Hợp đồng thuê phòng)
 CREATE TABLE IF NOT EXISTS contracts (
     id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     room_id BIGINT NOT NULL REFERENCES rooms(id) ON DELETE RESTRICT,
     tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE RESTRICT,
     start_date DATE NOT NULL,
@@ -60,6 +64,7 @@ CREATE TABLE IF NOT EXISTS contract_tenants (
 -- 6. BẢNG SERVICES (Danh mục dịch vụ tính phí: Điện, Nước, Mạng, Rác...)
 CREATE TABLE IF NOT EXISTS services (
     id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(50) NOT NULL,
     unit VARCHAR(20) NOT NULL, -- kWh, m³, phòng, người
     unit_price NUMERIC(12,0) NOT NULL CHECK (unit_price >= 0),
@@ -69,6 +74,7 @@ CREATE TABLE IF NOT EXISTS services (
 -- 7. BẢNG METER_READINGS (Ghi nhận chỉ số điện/nước hàng tháng theo phòng)
 CREATE TABLE IF NOT EXISTS meter_readings (
     id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     room_id BIGINT NOT NULL REFERENCES rooms(id) ON DELETE RESTRICT,
     service_id BIGINT NOT NULL REFERENCES services(id) ON DELETE RESTRICT,
     month INT NOT NULL CHECK (month BETWEEN 1 AND 12),
@@ -82,6 +88,7 @@ CREATE TABLE IF NOT EXISTS meter_readings (
 -- 8. BẢNG INVOICES (Hóa đơn tiền phòng & dịch vụ hàng tháng)
 CREATE TABLE IF NOT EXISTS invoices (
     id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     contract_id BIGINT NOT NULL REFERENCES contracts(id) ON DELETE RESTRICT,
     month INT NOT NULL CHECK (month BETWEEN 1 AND 12),
     year INT NOT NULL CHECK (year >= 2000),
@@ -112,11 +119,16 @@ CREATE TABLE IF NOT EXISTS payments (
 );
 
 -- TẠO CÁC CHỈ MỤC (INDEXES) TỐI ƯU HIỆU NĂNG TRUY VẤN
+CREATE INDEX IF NOT EXISTS idx_rooms_user ON rooms(user_id);
 CREATE INDEX IF NOT EXISTS idx_rooms_status ON rooms(status);
+CREATE INDEX IF NOT EXISTS idx_tenants_user ON tenants(user_id);
+CREATE INDEX IF NOT EXISTS idx_contracts_user ON contracts(user_id);
 CREATE INDEX IF NOT EXISTS idx_contracts_room ON contracts(room_id);
 CREATE INDEX IF NOT EXISTS idx_contracts_tenant ON contracts(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_contracts_status ON contracts(status);
+CREATE INDEX IF NOT EXISTS idx_services_user ON services(user_id);
 CREATE INDEX IF NOT EXISTS idx_meter_room_period ON meter_readings(room_id, year, month);
+CREATE INDEX IF NOT EXISTS idx_invoices_user ON invoices(user_id);
 CREATE INDEX IF NOT EXISTS idx_invoices_contract ON invoices(contract_id);
 CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices(status);
 CREATE INDEX IF NOT EXISTS idx_invoices_period ON invoices(year, month);

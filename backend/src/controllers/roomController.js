@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 exports.getRooms = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { status, q } = req.query;
 
     if (db.isConnected) {
@@ -12,9 +13,9 @@ exports.getRooms = async (req, res) => {
         FROM rooms r
         LEFT JOIN contracts c ON r.id = c.room_id AND c.status = 'ACTIVE'
         LEFT JOIN tenants t ON c.tenant_id = t.id
-        WHERE 1=1
+        WHERE r.user_id = $1
       `;
-      const params = [];
+      const params = [userId];
       if (status) {
         params.push(status);
         query += ` AND r.status = $${params.length}`;
@@ -27,7 +28,7 @@ exports.getRooms = async (req, res) => {
       const result = await db.query(query, params);
       return res.json({ success: true, data: result.rows });
     } else {
-      let rooms = [...db.memoryStore.rooms];
+      let rooms = db.memoryStore.rooms.filter(r => (r.user_id || 1) === userId);
       if (status) {
         rooms = rooms.filter(r => r.status.toUpperCase() === status.toUpperCase());
       }
@@ -41,7 +42,7 @@ exports.getRooms = async (req, res) => {
 
       // Attach active contract and tenant information if occupied
       const enriched = rooms.map(room => {
-        const contract = db.memoryStore.contracts.find(c => c.room_id === room.id && c.status === 'ACTIVE');
+        const contract = db.memoryStore.contracts.find(c => c.room_id === room.id && c.status === 'ACTIVE' && (c.user_id || 1) === userId);
         let tenant = null;
         if (contract) {
           tenant = db.memoryStore.tenants.find(t => t.id === contract.tenant_id);
@@ -67,6 +68,7 @@ exports.getRooms = async (req, res) => {
 
 exports.getRoomById = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     if (db.isConnected) {
       const result = await db.query(`
@@ -76,18 +78,18 @@ exports.getRoomById = async (req, res) => {
         FROM rooms r
         LEFT JOIN contracts c ON r.id = c.room_id AND c.status = 'ACTIVE'
         LEFT JOIN tenants t ON c.tenant_id = t.id
-        WHERE r.id = $1
-      `, [id]);
+        WHERE r.id = $1 AND r.user_id = $2
+      `, [id, userId]);
       if (result.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy phòng' });
       }
       return res.json({ success: true, data: result.rows[0] });
     } else {
-      const room = db.memoryStore.rooms.find(r => r.id === id);
+      const room = db.memoryStore.rooms.find(r => r.id === id && (r.user_id || 1) === userId);
       if (!room) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy phòng' });
       }
-      const contract = db.memoryStore.contracts.find(c => c.room_id === room.id && c.status === 'ACTIVE');
+      const contract = db.memoryStore.contracts.find(c => c.room_id === room.id && c.status === 'ACTIVE' && (c.user_id || 1) === userId);
       let tenant = null;
       if (contract) {
         tenant = db.memoryStore.tenants.find(t => t.id === contract.tenant_id);
@@ -113,6 +115,7 @@ exports.getRoomById = async (req, res) => {
 
 exports.createRoom = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { room_code, floor, area, price, status, note } = req.body;
     if (!room_code || price === undefined || price < 0) {
       return res.status(400).json({ success: false, message: 'Mã phòng và giá thuê (>= 0) là bắt buộc' });
@@ -121,23 +124,24 @@ exports.createRoom = async (req, res) => {
     const roomStatus = status || 'AVAILABLE';
 
     if (db.isConnected) {
-      const existing = await db.query('SELECT id FROM rooms WHERE room_code = $1', [room_code]);
+      const existing = await db.query('SELECT id FROM rooms WHERE room_code = $1 AND user_id = $2', [room_code, userId]);
       if (existing.rows.length > 0) {
-        return res.status(400).json({ success: false, message: `Mã phòng ${room_code} đã tồn tại` });
+        return res.status(400).json({ success: false, message: `Mã phòng ${room_code} đã tồn tại trong nhà trọ của bạn` });
       }
       const insert = await db.query(
-        `INSERT INTO rooms (room_code, floor, area, price, status, note) 
-         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-        [room_code, floor || 1, area || 0, price, roomStatus, note || null]
+        `INSERT INTO rooms (user_id, room_code, floor, area, price, status, note) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+        [userId, room_code, floor || 1, area || 0, price, roomStatus, note || null]
       );
       return res.status(201).json({ success: true, message: 'Thêm phòng thành công', data: insert.rows[0] });
     } else {
-      const existing = db.memoryStore.rooms.find(r => r.room_code.toLowerCase() === room_code.toLowerCase());
+      const existing = db.memoryStore.rooms.find(r => (r.user_id || 1) === userId && r.room_code.toLowerCase() === room_code.toLowerCase());
       if (existing) {
-        return res.status(400).json({ success: false, message: `Mã phòng ${room_code} đã tồn tại` });
+        return res.status(400).json({ success: false, message: `Mã phòng ${room_code} đã tồn tại trong nhà trọ của bạn` });
       }
       const newRoom = {
         id: db.memoryStore.rooms.length > 0 ? Math.max(...db.memoryStore.rooms.map(r => r.id)) + 1 : 1,
+        user_id: userId,
         room_code,
         floor: Number(floor) || 1,
         area: Number(area) || 0,
@@ -155,11 +159,12 @@ exports.createRoom = async (req, res) => {
 
 exports.updateRoom = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     const { room_code, floor, area, price, status, note } = req.body;
 
     if (db.isConnected) {
-      const existing = await db.query('SELECT * FROM rooms WHERE id = $1', [id]);
+      const existing = await db.query('SELECT * FROM rooms WHERE id = $1 AND user_id = $2', [id, userId]);
       if (existing.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy phòng' });
       }
@@ -171,12 +176,12 @@ exports.updateRoom = async (req, res) => {
              price = COALESCE($4, price),
              status = COALESCE($5, status),
              note = COALESCE($6, note)
-         WHERE id = $7 RETURNING *`,
-        [room_code, floor, area, price, status, note, id]
+         WHERE id = $7 AND user_id = $8 RETURNING *`,
+        [room_code, floor, area, price, status, note, id, userId]
       );
       return res.json({ success: true, message: 'Cập nhật phòng thành công', data: update.rows[0] });
     } else {
-      const room = db.memoryStore.rooms.find(r => r.id === id);
+      const room = db.memoryStore.rooms.find(r => r.id === id && (r.user_id || 1) === userId);
       if (!room) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy phòng' });
       }
@@ -195,12 +200,16 @@ exports.updateRoom = async (req, res) => {
 
 exports.deleteRoom = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     if (db.isConnected) {
-      await db.query('DELETE FROM rooms WHERE id = $1', [id]);
+      const result = await db.query('DELETE FROM rooms WHERE id = $1 AND user_id = $2', [id, userId]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy phòng' });
+      }
       return res.json({ success: true, message: 'Xóa phòng thành công' });
     } else {
-      const index = db.memoryStore.rooms.findIndex(r => r.id === id);
+      const index = db.memoryStore.rooms.findIndex(r => r.id === id && (r.user_id || 1) === userId);
       if (index === -1) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy phòng' });
       }

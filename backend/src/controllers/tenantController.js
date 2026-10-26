@@ -2,11 +2,12 @@ const db = require('../config/db');
 
 exports.getTenants = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { q } = req.query;
 
     if (db.isConnected) {
-      let query = 'SELECT * FROM tenants WHERE 1=1';
-      const params = [];
+      let query = 'SELECT * FROM tenants WHERE user_id = $1';
+      const params = [userId];
       if (q) {
         params.push(`%${q}%`);
         query += ` AND (full_name ILIKE $${params.length} OR phone ILIKE $${params.length} OR id_card ILIKE $${params.length} OR hometown ILIKE $${params.length})`;
@@ -15,7 +16,7 @@ exports.getTenants = async (req, res) => {
       const result = await db.query(query, params);
       return res.json({ success: true, data: result.rows });
     } else {
-      let tenants = [...db.memoryStore.tenants];
+      let tenants = db.memoryStore.tenants.filter(t => (t.user_id || 1) === userId);
       if (q) {
         const queryLower = q.toLowerCase();
         tenants = tenants.filter(t => 
@@ -34,15 +35,16 @@ exports.getTenants = async (req, res) => {
 
 exports.getTenantById = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     if (db.isConnected) {
-      const result = await db.query('SELECT * FROM tenants WHERE id = $1', [id]);
+      const result = await db.query('SELECT * FROM tenants WHERE id = $1 AND user_id = $2', [id, userId]);
       if (result.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy khách thuê' });
       }
       return res.json({ success: true, data: result.rows[0] });
     } else {
-      const tenant = db.memoryStore.tenants.find(t => t.id === id);
+      const tenant = db.memoryStore.tenants.find(t => t.id === id && (t.user_id || 1) === userId);
       if (!tenant) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy khách thuê' });
       }
@@ -55,6 +57,7 @@ exports.getTenantById = async (req, res) => {
 
 exports.createTenant = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { full_name, phone, id_card, birth_date, hometown } = req.body;
     if (!full_name) {
       return res.status(400).json({ success: false, message: 'Họ tên khách thuê là bắt buộc' });
@@ -62,23 +65,24 @@ exports.createTenant = async (req, res) => {
 
     if (db.isConnected) {
       if (id_card) {
-        const existing = await db.query('SELECT id FROM tenants WHERE id_card = $1', [id_card]);
+        const existing = await db.query('SELECT id FROM tenants WHERE id_card = $1 AND user_id = $2', [id_card, userId]);
         if (existing.rows.length > 0) {
-          return res.status(400).json({ success: false, message: `Số CCCD ${id_card} đã tồn tại trong hệ thống` });
+          return res.status(400).json({ success: false, message: `Số CCCD ${id_card} đã tồn tại trong danh sách của bạn` });
         }
       }
       const insert = await db.query(
-        `INSERT INTO tenants (full_name, phone, id_card, birth_date, hometown)
-         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [full_name, phone || null, id_card || null, birth_date || null, hometown || null]
+        `INSERT INTO tenants (user_id, full_name, phone, id_card, birth_date, hometown)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [userId, full_name, phone || null, id_card || null, birth_date || null, hometown || null]
       );
       return res.status(201).json({ success: true, message: 'Thêm khách thuê thành công', data: insert.rows[0] });
     } else {
-      if (id_card && db.memoryStore.tenants.some(t => t.id_card === id_card)) {
-        return res.status(400).json({ success: false, message: `Số CCCD ${id_card} đã tồn tại trong hệ thống` });
+      if (id_card && db.memoryStore.tenants.some(t => (t.user_id || 1) === userId && t.id_card === id_card)) {
+        return res.status(400).json({ success: false, message: `Số CCCD ${id_card} đã tồn tại trong danh sách của bạn` });
       }
       const newTenant = {
         id: db.memoryStore.tenants.length > 0 ? Math.max(...db.memoryStore.tenants.map(t => t.id)) + 1 : 1,
+        user_id: userId,
         full_name,
         phone: phone || '',
         id_card: id_card || '',
@@ -96,6 +100,7 @@ exports.createTenant = async (req, res) => {
 
 exports.updateTenant = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     const { full_name, phone, id_card, birth_date, hometown } = req.body;
 
@@ -107,15 +112,15 @@ exports.updateTenant = async (req, res) => {
              id_card = COALESCE($3, id_card),
              birth_date = COALESCE($4, birth_date),
              hometown = COALESCE($5, hometown)
-         WHERE id = $6 RETURNING *`,
-        [full_name, phone, id_card, birth_date, hometown, id]
+         WHERE id = $6 AND user_id = $7 RETURNING *`,
+        [full_name, phone, id_card, birth_date, hometown, id, userId]
       );
       if (update.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy khách thuê' });
       }
       return res.json({ success: true, message: 'Cập nhật khách thuê thành công', data: update.rows[0] });
     } else {
-      const tenant = db.memoryStore.tenants.find(t => t.id === id);
+      const tenant = db.memoryStore.tenants.find(t => t.id === id && (t.user_id || 1) === userId);
       if (!tenant) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy khách thuê' });
       }
@@ -133,12 +138,16 @@ exports.updateTenant = async (req, res) => {
 
 exports.deleteTenant = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     if (db.isConnected) {
-      await db.query('DELETE FROM tenants WHERE id = $1', [id]);
+      const result = await db.query('DELETE FROM tenants WHERE id = $1 AND user_id = $2', [id, userId]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy khách thuê' });
+      }
       return res.json({ success: true, message: 'Xóa khách thuê thành công' });
     } else {
-      const index = db.memoryStore.tenants.findIndex(t => t.id === id);
+      const index = db.memoryStore.tenants.findIndex(t => t.id === id && (t.user_id || 1) === userId);
       if (index === -1) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy khách thuê' });
       }

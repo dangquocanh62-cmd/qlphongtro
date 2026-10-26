@@ -2,6 +2,8 @@ const db = require('../config/db');
 
 exports.getStats = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
+
     if (db.isConnected) {
       const roomCountsRes = await db.query(`
         SELECT 
@@ -10,10 +12,11 @@ exports.getStats = async (req, res) => {
           COUNT(*) FILTER (WHERE status = 'OCCUPIED') as occupied_rooms,
           COUNT(*) FILTER (WHERE status = 'MAINTENANCE') as maintenance_rooms
         FROM rooms
-      `);
+        WHERE user_id = $1
+      `, [userId]);
 
-      const tenantCountRes = await db.query('SELECT COUNT(*) as total_tenants FROM tenants');
-      const activeContractsRes = await db.query("SELECT COUNT(*) as active_contracts FROM contracts WHERE status = 'ACTIVE'");
+      const tenantCountRes = await db.query('SELECT COUNT(*) as total_tenants FROM tenants WHERE user_id = $1', [userId]);
+      const activeContractsRes = await db.query("SELECT COUNT(*) as active_contracts FROM contracts WHERE status = 'ACTIVE' AND user_id = $1", [userId]);
 
       const invoicesRes = await db.query(`
         SELECT 
@@ -23,9 +26,15 @@ exports.getStats = async (req, res) => {
           COUNT(*) FILTER (WHERE status = 'PARTIAL') as partial_invoices,
           COALESCE(SUM(total_amount), 0) as total_invoiced_amount
         FROM invoices
-      `);
+        WHERE user_id = $1
+      `, [userId]);
 
-      const paymentsRes = await db.query('SELECT COALESCE(SUM(amount), 0) as total_revenue FROM payments');
+      const paymentsRes = await db.query(`
+        SELECT COALESCE(SUM(p.amount), 0) as total_revenue
+        FROM payments p
+        JOIN invoices i ON p.invoice_id = i.id
+        WHERE i.user_id = $1
+      `, [userId]);
 
       const roomCounts = roomCountsRes.rows[0];
       const invCounts = invoicesRes.rows[0];
@@ -51,11 +60,12 @@ exports.getStats = async (req, res) => {
         }
       });
     } else {
-      const rooms = db.memoryStore.rooms;
-      const tenants = db.memoryStore.tenants;
-      const contracts = db.memoryStore.contracts;
-      const invoices = db.memoryStore.invoices;
-      const payments = db.memoryStore.payments;
+      const rooms = db.memoryStore.rooms.filter(r => (r.user_id || 1) === userId);
+      const tenants = db.memoryStore.tenants.filter(t => (t.user_id || 1) === userId);
+      const contracts = db.memoryStore.contracts.filter(c => (c.user_id || 1) === userId);
+      const invoices = db.memoryStore.invoices.filter(i => (i.user_id || 1) === userId);
+      const invoiceIds = invoices.map(i => i.id);
+      const payments = db.memoryStore.payments.filter(p => invoiceIds.includes(p.invoice_id));
 
       const totalRevenue = payments.reduce((sum, p) => sum + Number(p.amount), 0);
       const totalInvoiced = invoices.reduce((sum, i) => sum + Number(i.total_amount), 0);

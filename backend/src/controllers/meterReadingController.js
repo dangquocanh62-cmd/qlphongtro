@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 exports.getMeterReadings = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { roomId, serviceId, month, year } = req.query;
 
     if (db.isConnected) {
@@ -14,9 +15,9 @@ exports.getMeterReadings = async (req, res) => {
         FROM meter_readings mr
         JOIN rooms r ON mr.room_id = r.id
         JOIN services s ON mr.service_id = s.id
-        WHERE 1=1
+        WHERE mr.user_id = $1
       `;
-      const params = [];
+      const params = [userId];
       if (roomId) {
         params.push(roomId);
         query += ` AND mr.room_id = $${params.length}`;
@@ -37,7 +38,7 @@ exports.getMeterReadings = async (req, res) => {
       const result = await db.query(query, params);
       return res.json({ success: true, data: result.rows });
     } else {
-      let readings = [...db.memoryStore.meter_readings];
+      let readings = db.memoryStore.meter_readings.filter(m => (m.user_id || 1) === userId);
       if (roomId) readings = readings.filter(m => m.room_id === parseInt(roomId, 10));
       if (serviceId) readings = readings.filter(m => m.service_id === parseInt(serviceId, 10));
       if (month) readings = readings.filter(m => m.month === parseInt(month, 10));
@@ -68,6 +69,7 @@ exports.getMeterReadings = async (req, res) => {
 
 exports.getLatestReading = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { roomId, serviceId } = req.query;
     if (!roomId || !serviceId) {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp roomId và serviceId' });
@@ -76,14 +78,14 @@ exports.getLatestReading = async (req, res) => {
     if (db.isConnected) {
       const result = await db.query(
         `SELECT * FROM meter_readings 
-         WHERE room_id = $1 AND service_id = $2 
+         WHERE room_id = $1 AND service_id = $2 AND user_id = $3
          ORDER BY year DESC, month DESC LIMIT 1`,
-        [roomId, serviceId]
+        [roomId, serviceId, userId]
       );
       return res.json({ success: true, data: result.rows[0] || null });
     } else {
       const list = db.memoryStore.meter_readings
-        .filter(m => m.room_id === parseInt(roomId, 10) && m.service_id === parseInt(serviceId, 10))
+        .filter(m => (m.user_id || 1) === userId && m.room_id === parseInt(roomId, 10) && m.service_id === parseInt(serviceId, 10))
         .sort((a, b) => (b.year * 12 + b.month) - (a.year * 12 + a.month));
       return res.json({ success: true, data: list[0] || null });
     }
@@ -94,6 +96,7 @@ exports.getLatestReading = async (req, res) => {
 
 exports.createMeterReading = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { room_id, service_id, month, year, old_value, new_value } = req.body;
     if (!room_id || !service_id || !month || !year || old_value === undefined || new_value === undefined) {
       return res.status(400).json({ success: false, message: 'Vui lòng điền đủ phòng, dịch vụ, tháng, năm và các chỉ số' });
@@ -113,22 +116,22 @@ exports.createMeterReading = async (req, res) => {
 
     if (db.isConnected) {
       const existing = await db.query(
-        `SELECT id FROM meter_readings WHERE room_id = $1 AND service_id = $2 AND month = $3 AND year = $4`,
-        [room_id, service_id, m, y]
+        `SELECT id FROM meter_readings WHERE room_id = $1 AND service_id = $2 AND month = $3 AND year = $4 AND user_id = $5`,
+        [room_id, service_id, m, y, userId]
       );
       if (existing.rows.length > 0) {
         return res.status(400).json({ success: false, message: `Chỉ số của phòng cho dịch vụ này trong tháng ${m}/${y} đã được ghi` });
       }
 
       const insert = await db.query(
-        `INSERT INTO meter_readings (room_id, service_id, month, year, old_value, new_value)
-         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-        [room_id, service_id, m, y, oldVal, newVal]
+        `INSERT INTO meter_readings (user_id, room_id, service_id, month, year, old_value, new_value)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+        [userId, room_id, service_id, m, y, oldVal, newVal]
       );
       return res.status(201).json({ success: true, message: 'Ghi chỉ số thành công', data: insert.rows[0] });
     } else {
       const existing = db.memoryStore.meter_readings.find(
-        r => r.room_id === parseInt(room_id, 10) && r.service_id === parseInt(service_id, 10) && r.month === m && r.year === y
+        r => (r.user_id || 1) === userId && r.room_id === parseInt(room_id, 10) && r.service_id === parseInt(service_id, 10) && r.month === m && r.year === y
       );
       if (existing) {
         return res.status(400).json({ success: false, message: `Chỉ số của phòng cho dịch vụ này trong tháng ${m}/${y} đã được ghi` });
@@ -137,6 +140,7 @@ exports.createMeterReading = async (req, res) => {
       const newId = db.memoryStore.meter_readings.length > 0 ? Math.max(...db.memoryStore.meter_readings.map(r => r.id)) + 1 : 1;
       const reading = {
         id: newId,
+        user_id: userId,
         room_id: parseInt(room_id, 10),
         service_id: parseInt(service_id, 10),
         month: m,
@@ -154,6 +158,7 @@ exports.createMeterReading = async (req, res) => {
 
 exports.updateMeterReading = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     const { old_value, new_value } = req.body;
 
@@ -166,15 +171,15 @@ exports.updateMeterReading = async (req, res) => {
         `UPDATE meter_readings 
          SET old_value = COALESCE($1, old_value),
              new_value = COALESCE($2, new_value)
-         WHERE id = $3 RETURNING *`,
-        [old_value, new_value, id]
+         WHERE id = $3 AND user_id = $4 RETURNING *`,
+        [old_value, new_value, id, userId]
       );
       if (update.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy bản ghi chỉ số' });
       }
       return res.json({ success: true, message: 'Cập nhật chỉ số thành công', data: update.rows[0] });
     } else {
-      const reading = db.memoryStore.meter_readings.find(m => m.id === id);
+      const reading = db.memoryStore.meter_readings.find(m => m.id === id && (m.user_id || 1) === userId);
       if (!reading) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy bản ghi chỉ số' });
       }
@@ -189,12 +194,16 @@ exports.updateMeterReading = async (req, res) => {
 
 exports.deleteMeterReading = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const id = parseInt(req.params.id, 10);
     if (db.isConnected) {
-      await db.query('DELETE FROM meter_readings WHERE id = $1', [id]);
+      const result = await db.query('DELETE FROM meter_readings WHERE id = $1 AND user_id = $2', [id, userId]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy bản ghi chỉ số' });
+      }
       return res.json({ success: true, message: 'Xóa chỉ số thành công' });
     } else {
-      const idx = db.memoryStore.meter_readings.findIndex(m => m.id === id);
+      const idx = db.memoryStore.meter_readings.findIndex(m => m.id === id && (m.user_id || 1) === userId);
       if (idx === -1) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy bản ghi chỉ số' });
       }

@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 exports.getPayments = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { invoiceId } = req.query;
 
     if (db.isConnected) {
@@ -13,9 +14,9 @@ exports.getPayments = async (req, res) => {
         JOIN contracts c ON i.contract_id = c.id
         JOIN rooms r ON c.room_id = r.id
         JOIN tenants t ON c.tenant_id = t.id
-        WHERE 1=1
+        WHERE i.user_id = $1
       `;
-      const params = [];
+      const params = [userId];
       if (invoiceId) {
         params.push(invoiceId);
         query += ` AND p.invoice_id = $${params.length}`;
@@ -24,7 +25,10 @@ exports.getPayments = async (req, res) => {
       const result = await db.query(query, params);
       return res.json({ success: true, data: result.rows });
     } else {
-      let list = [...db.memoryStore.payments];
+      let list = db.memoryStore.payments.filter(p => {
+        const inv = db.memoryStore.invoices.find(i => i.id === p.invoice_id);
+        return inv && (inv.user_id || 1) === userId;
+      });
       if (invoiceId) {
         list = list.filter(p => p.invoice_id === parseInt(invoiceId, 10));
       }
@@ -51,6 +55,7 @@ exports.getPayments = async (req, res) => {
 
 exports.createPayment = async (req, res) => {
   try {
+    const userId = req.user?.id || 1;
     const { invoice_id, amount, method, paid_at } = req.body;
     if (!invoice_id || !amount || Number(amount) <= 0) {
       return res.status(400).json({ success: false, message: 'Mã hóa đơn và số tiền thanh toán (> 0) là bắt buộc' });
@@ -61,10 +66,10 @@ exports.createPayment = async (req, res) => {
     const payAmount = Number(amount);
 
     if (db.isConnected) {
-      // Get invoice details
-      const invRes = await db.query('SELECT total_amount, status FROM invoices WHERE id = $1', [invoice_id]);
+      // Get invoice details belonging to this user
+      const invRes = await db.query('SELECT total_amount, status FROM invoices WHERE id = $1 AND user_id = $2', [invoice_id, userId]);
       if (invRes.rows.length === 0) {
-        return res.status(404).json({ success: false, message: 'Không tìm thấy hóa đơn' });
+        return res.status(404).json({ success: false, message: 'Không tìm thấy hóa đơn thuộc quyền quản lý của bạn' });
       }
       const invoice = invRes.rows[0];
 
@@ -88,7 +93,7 @@ exports.createPayment = async (req, res) => {
         newStatus = 'PAID';
       }
 
-      await db.query('UPDATE invoices SET status = $1 WHERE id = $2', [newStatus, invoice_id]);
+      await db.query('UPDATE invoices SET status = $1 WHERE id = $2 AND user_id = $3', [newStatus, invoice_id, userId]);
 
       return res.status(201).json({
         success: true,
@@ -101,9 +106,9 @@ exports.createPayment = async (req, res) => {
         }
       });
     } else {
-      const invoice = db.memoryStore.invoices.find(i => i.id === parseInt(invoice_id, 10));
+      const invoice = db.memoryStore.invoices.find(i => i.id === parseInt(invoice_id, 10) && (i.user_id || 1) === userId);
       if (!invoice) {
-        return res.status(404).json({ success: false, message: 'Không tìm thấy hóa đơn' });
+        return res.status(404).json({ success: false, message: 'Không tìm thấy hóa đơn thuộc quyền quản lý của bạn' });
       }
 
       const newId = db.memoryStore.payments.length > 0 ? Math.max(...db.memoryStore.payments.map(p => p.id)) + 1 : 1;
