@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.nhatro.app.data.model.Tenant;
 import com.nhatro.app.databinding.ItemTenantBinding;
+import com.nhatro.app.utils.DateUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class TenantAdapter extends RecyclerView.Adapter<TenantAdapter.TenantView
 
             String info = "Quê quán: " + (tenant.getHometown() != null ? tenant.getHometown() : "---");
             if (tenant.getBirthDate() != null) {
-                info += " • Sinh: " + tenant.getBirthDate();
+                info += " • Sinh: " + DateUtils.formatDateVN(tenant.getBirthDate());
             }
             binding.tvHometown.setText(info);
         }
