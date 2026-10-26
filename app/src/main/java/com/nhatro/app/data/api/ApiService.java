@@ -13,7 +13,7 @@ public interface ApiService {
     Call<ApiResponse<LoginResponse>> login(@Body LoginRequest request);
 
     @POST("auth/register")
-    Call<ApiResponse<User>> register(@Body Map<String, Object> body);
+    Call<ApiResponse<LoginResponse>> register(@Body RegisterRequest request);
 
     @GET("auth/profile")
     Call<ApiResponse<User>> getProfile();

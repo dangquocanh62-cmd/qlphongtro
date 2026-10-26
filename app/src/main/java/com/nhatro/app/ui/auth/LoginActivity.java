@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
         binding.btnLogin.setOnClickListener(v -> attemptLogin());
+        binding.tvGoToRegister.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
         binding.btnConfigServer.setOnClickListener(v -> showConfigServerDialog());
     }
 
