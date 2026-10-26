@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_services"
+        android:title="Dịch vụ"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_meters"
+        android:title="Ghi điện nước"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_config_server"
+        android:title="Đổi URL máy chủ"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:title="Đăng xuất"
+        app:showAsAction="never" />
+</menu>

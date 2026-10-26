@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# App build outputs (keep APK if needed or ignore)
+app/build/
+
+# Backend ignores
+backend/node_modules/
+backend/.env

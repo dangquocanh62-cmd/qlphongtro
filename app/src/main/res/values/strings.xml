@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Quản Lý Nhà Trọ</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Tổng quan</string>
+    <string name="nav_rooms">Phòng trọ</string>
+    <string name="nav_tenants">Khách thuê</string>
+    <string name="nav_contracts">Hợp đồng</string>
+    <string name="nav_invoices">Hóa đơn</string>
+
+    <!-- Auth -->
+    <string name="login_title">Đăng Nhập Quản Lý Nhà Trọ</string>
+    <string name="login_subtitle">Hệ thống quản lý phòng, khách thuê và tài chính</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Mật khẩu</string>
+    <string name="btn_login">Đăng Nhập</string>
+    <string name="config_server">Cấu hình máy chủ API</string>
+    <string name="demo_account_hint">Tài khoản demo: admin@nhatro.vn / 123456</string>
+
+    <!-- Rooms -->
+    <string name="title_rooms">Danh Sách Phòng</string>
+    <string name="status_available">Còn trống</string>
+    <string name="status_occupied">Đang thuê</string>
+    <string name="status_maintenance">Bảo trì</string>
+    <string name="filter_all">Tất cả</string>
+    <string name="add_room">Thêm phòng mới</string>
+    <string name="edit_room">Sửa thông tin phòng</string>
+
+    <!-- Contracts -->
+    <string name="title_contracts">Hợp Đồng Thuê</string>
+    <string name="contract_active">Đang hiệu lực</string>
+    <string name="contract_ended">Đã kết thúc</string>
+    <string name="add_contract">Lập hợp đồng mới</string>
+
+    <!-- Tenants -->
+    <string name="title_tenants">Khách Thuê</string>
+    <string name="add_tenant">Thêm khách thuê</string>
+
+    <!-- Invoices & Billing -->
+    <string name="title_invoices">Hóa Đơn &amp; Thu Chi</string>
+    <string name="invoice_unpaid">Chưa thanh toán</string>
+    <string name="invoice_partial">Đã trả một phần</string>
+    <string name="invoice_paid">Đã thanh toán</string>
+    <string name="btn_create_invoice">Lập hóa đơn</string>
+    <string name="btn_auto_invoice">Tính tiền tự động</string>
+
+    <!-- Services & Meters -->
+    <string name="title_services">Danh Mục Dịch Vụ</string>
+    <string name="title_meters">Ghi Chỉ Số Điện Nước</string>
+    <string name="add_reading">Nhập chỉ số tháng</string>
+
+    <!-- Common -->
+    <string name="save">Lưu lại</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="search_hint">Tìm kiếm...</string>
+    <string name="loading">Đang tải dữ liệu...</string>
+    <string name="empty_data">Chưa có dữ liệu nào</string>
+</resources>
