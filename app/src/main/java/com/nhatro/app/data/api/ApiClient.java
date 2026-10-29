@@ -54,9 +54,9 @@ public class ApiClient {
                     .addInterceptor(fallbackInterceptor)
                     .addInterceptor(new AuthInterceptor(context))
                     .addInterceptor(logging)
-                    .connectTimeout(15, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .connectTimeout(45, TimeUnit.SECONDS)
+                    .readTimeout(45, TimeUnit.SECONDS)
+                    .writeTimeout(45, TimeUnit.SECONDS)
                     .build();
 
             Gson gson = new GsonBuilder()

@@ -54,10 +54,10 @@ public class SharedPrefsHelper {
 
     public String getServerUrl() {
         String url = prefs.getString(Constants.KEY_SERVER_URL, Constants.DEFAULT_BASE_URL);
-        if (url != null && (url.contains("onrender.com") || url.contains("10.0.2.2"))) {
+        if (url != null && (url.contains("127.0.0.1") || url.contains("10.0.2.2"))) {
             return Constants.DEFAULT_BASE_URL;
         }
-        return url != null ? url : Constants.DEFAULT_BASE_URL;
+        return url != null && !url.trim().isEmpty() ? url : Constants.DEFAULT_BASE_URL;
     }
 
     public void saveBankInfo(String bankName, String bankAccount, String bankOwner) {

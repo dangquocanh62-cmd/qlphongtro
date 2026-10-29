@@ -1,8 +1,8 @@
 package com.nhatro.app.utils;
 
 public class Constants {
-    // Kết nối trực tiếp máy chủ Node.js qua adb reverse tcp:3000 tcp:3000
-    public static final String DEFAULT_BASE_URL = "http://127.0.0.1:3000/api/";
+    // Máy chủ Cloud Render 24/7 (Hoạt động trên mọi thiết bị Android, 4G, Wifi)
+    public static final String DEFAULT_BASE_URL = "https://qlphongtro-2y3o.onrender.com/api/";
     
     public static final String PREF_NAME = "QLPhongTroPrefs";
     public static final String KEY_TOKEN = "key_token";
