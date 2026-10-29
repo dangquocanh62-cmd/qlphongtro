@@ -833,20 +833,30 @@
                         android:paddingVertical="4dp"
                         android:gravity="center"
                         android:text="1. Điện nước"
-                        android:textColor="@color/primary"
+                        android:textColor="#B45309"
                         android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeMaxTextSize="12sp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         app:icon="@drawable/ic_electric"
-                        app:iconTint="@color/icon_electric"
+                        app:iconTint="#D97706"
+                        app:iconSize="16dp"
                         app:iconGravity="textStart"
                         app:iconPadding="4dp"
-                        app:cornerRadius="@dimen/radius_button"
-                        app:strokeColor="@color/divider" />
+                        app:backgroundTint="#FFFBEB"
+                        app:strokeColor="#FCD34D"
+                        app:strokeWidth="1.2dp"
+                        app:cornerRadius="@dimen/radius_button" />
 
-                    <!-- Bước 2: Lập hóa đơn (Nổi bật) -->
+                    <!-- Bước 2: Lập hóa đơn -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnQuickInvoice"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
                         android:layout_weight="1"
@@ -855,17 +865,25 @@
                         android:paddingVertical="4dp"
                         android:gravity="center"
                         android:text="2. Hóa đơn"
-                        android:textColor="@color/text_white"
+                        android:textColor="#1D4ED8"
                         android:textSize="12sp"
-                        android:backgroundTint="@color/primary"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeMaxTextSize="12sp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         app:icon="@drawable/ic_invoices"
-                        app:iconTint="@color/text_white"
+                        app:iconTint="#2563EB"
+                        app:iconSize="16dp"
                         app:iconGravity="textStart"
                         app:iconPadding="4dp"
-                        app:cornerRadius="@dimen/radius_button"
-                        app:elevation="0dp" />
+                        app:backgroundTint="#EFF6FF"
+                        app:strokeColor="#93C5FD"
+                        app:strokeWidth="1.5dp"
+                        app:cornerRadius="@dimen/radius_button" />
 
                     <!-- Bước 3: Thu tiền -->
                     <com.google.android.material.button.MaterialButton
@@ -879,16 +897,25 @@
                         android:paddingVertical="4dp"
                         android:gravity="center"
                         android:text="3. Thu tiền"
-                        android:textColor="@color/status_unpaid_text"
+                        android:textColor="#B91C1C"
                         android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeMaxTextSize="12sp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         app:icon="@drawable/ic_money"
-                        app:iconTint="@color/status_unpaid_text"
+                        app:iconTint="#DC2626"
+                        app:iconSize="16dp"
                         app:iconGravity="textStart"
                         app:iconPadding="4dp"
-                        app:cornerRadius="@dimen/radius_button"
-                        app:strokeColor="#FECACA" />
+                        app:backgroundTint="#FEF2F2"
+                        app:strokeColor="#FCA5A5"
+                        app:strokeWidth="1.2dp"
+                        app:cornerRadius="@dimen/radius_button" />
                 </LinearLayout>
 
                 <!-- Hàng 2: Thao tác quản lý thường dùng: Tạo HĐ / Thêm Khách / Dịch vụ -->
@@ -910,16 +937,25 @@
                         android:paddingVertical="4dp"
                         android:gravity="center"
                         android:text="Tạo hợp đồng"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="#6D28D9"
                         android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeMaxTextSize="12sp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         app:icon="@drawable/ic_contracts"
                         app:iconTint="#7C3AED"
+                        app:iconSize="16dp"
                         app:iconGravity="textStart"
                         app:iconPadding="4dp"
-                        app:cornerRadius="@dimen/radius_button"
-                        app:strokeColor="@color/divider" />
+                        app:backgroundTint="#FAF5FF"
+                        app:strokeColor="#D8B4FE"
+                        app:strokeWidth="1.2dp"
+                        app:cornerRadius="@dimen/radius_button" />
 
                     <!-- Thêm khách -->
                     <com.google.android.material.button.MaterialButton
@@ -933,16 +969,25 @@
                         android:paddingVertical="4dp"
                         android:gravity="center"
                         android:text="Thêm khách"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="#15803D"
                         android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeMaxTextSize="12sp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         app:icon="@drawable/ic_tenants"
-                        app:iconTint="@color/status_available_text"
+                        app:iconTint="#16A34A"
+                        app:iconSize="16dp"
                         app:iconGravity="textStart"
                         app:iconPadding="4dp"
-                        app:cornerRadius="@dimen/radius_button"
-                        app:strokeColor="@color/divider" />
+                        app:backgroundTint="#F0FDF4"
+                        app:strokeColor="#86EFAC"
+                        app:strokeWidth="1.2dp"
+                        app:cornerRadius="@dimen/radius_button" />
 
                     <!-- Bảng dịch vụ -->
                     <com.google.android.material.button.MaterialButton
@@ -956,16 +1001,25 @@
                         android:paddingVertical="4dp"
                         android:gravity="center"
                         android:text="Dịch vụ"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="#0F766E"
                         android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeMaxTextSize="12sp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         app:icon="@drawable/ic_server"
-                        app:iconTint="@color/secondary"
+                        app:iconTint="#0D9488"
+                        app:iconSize="16dp"
                         app:iconGravity="textStart"
                         app:iconPadding="4dp"
-                        app:cornerRadius="@dimen/radius_button"
-                        app:strokeColor="@color/divider" />
+                        app:backgroundTint="#F0FDFA"
+                        app:strokeColor="#5EEAD4"
+                        app:strokeWidth="1.2dp"
+                        app:cornerRadius="@dimen/radius_button" />
                 </LinearLayout>
 
                 <!-- 7. BIỂU ĐỒ DOANH THU THEO THÁNG (MPAndroidChart) -->
