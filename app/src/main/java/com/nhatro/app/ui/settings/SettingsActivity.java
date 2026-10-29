@@ -8,8 +8,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.nhatro.app.R;
 import com.nhatro.app.data.api.ApiClient;
+import com.nhatro.app.data.model.ApiResponse;
+import com.nhatro.app.data.model.ChangePasswordRequest;
 import com.nhatro.app.databinding.ActivitySettingsBinding;
 import com.nhatro.app.ui.auth.LoginActivity;
 import com.nhatro.app.ui.meter.MeterReadingListActivity;
@@ -90,6 +93,9 @@ public class SettingsActivity extends AppCompatActivity {
         // Chỉnh sửa tài khoản ngân hàng VietQR
         binding.btnEditBank.setOnClickListener(v -> showEditBankDialog());
 
+        // Đổi mật khẩu
+        binding.layoutChangePassword.setOnClickListener(v -> showChangePasswordDialog());
+
         // Quản lý dịch vụ
         binding.layoutManageServices.setOnClickListener(v -> {
             startActivity(new Intent(this, ServiceListActivity.class));
@@ -105,6 +111,85 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Đăng xuất
         binding.btnLogout.setOnClickListener(v -> showLogoutDialog());
+    }
+
+    private void showChangePasswordDialog() {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_password, null);
+        TextInputEditText etCurrentPassword = dialogView.findViewById(R.id.etCurrentPassword);
+        TextInputEditText etNewPassword = dialogView.findViewById(R.id.etNewPassword);
+        TextInputEditText etConfirmPassword = dialogView.findViewById(R.id.etConfirmPassword);
+        TextInputLayout tilCurrentPassword = dialogView.findViewById(R.id.tilCurrentPassword);
+        TextInputLayout tilNewPassword = dialogView.findViewById(R.id.tilNewPassword);
+        TextInputLayout tilConfirmPassword = dialogView.findViewById(R.id.tilConfirmPassword);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setPositiveButton("Đổi mật khẩu", null)
+                .setNegativeButton("Hủy", null)
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                tilCurrentPassword.setError(null);
+                tilNewPassword.setError(null);
+                tilConfirmPassword.setError(null);
+
+                String currentPassword = etCurrentPassword.getText() != null ? etCurrentPassword.getText().toString().trim() : "";
+                String newPassword = etNewPassword.getText() != null ? etNewPassword.getText().toString().trim() : "";
+                String confirmPassword = etConfirmPassword.getText() != null ? etConfirmPassword.getText().toString().trim() : "";
+
+                if (currentPassword.isEmpty()) {
+                    tilCurrentPassword.setError("Vui lòng nhập mật khẩu hiện tại");
+                    return;
+                }
+                if (newPassword.isEmpty()) {
+                    tilNewPassword.setError("Vui lòng nhập mật khẩu mới");
+                    return;
+                }
+                if (newPassword.length() < 6) {
+                    tilNewPassword.setError("Mật khẩu mới phải có ít nhất 6 ký tự");
+                    return;
+                }
+                if (!newPassword.equals(confirmPassword)) {
+                    tilConfirmPassword.setError("Mật khẩu xác nhận không trùng khớp");
+                    return;
+                }
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                ChangePasswordRequest req = new ChangePasswordRequest(currentPassword, newPassword);
+
+                ApiClient.getApiService(this).changePassword(req).enqueue(new retrofit2.Callback<ApiResponse<Void>>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<ApiResponse<Void>> call, retrofit2.Response<ApiResponse<Void>> response) {
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                            Toast.makeText(SettingsActivity.this, "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        } else {
+                            String errorMsg = "Đổi mật khẩu thất bại";
+                            try {
+                                if (response.errorBody() != null) {
+                                    org.json.JSONObject jObjError = new org.json.JSONObject(response.errorBody().string());
+                                    if (jObjError.has("message")) {
+                                        errorMsg = jObjError.getString("message");
+                                    }
+                                }
+                            } catch (Exception ignored) {}
+                            tilCurrentPassword.setError(errorMsg);
+                            Toast.makeText(SettingsActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(retrofit2.Call<ApiResponse<Void>> call, Throwable t) {
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        Toast.makeText(SettingsActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        });
+
+        dialog.show();
     }
 
     private void showEditBankDialog() {

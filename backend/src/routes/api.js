@@ -16,6 +16,7 @@ const dashboardController = require('../controllers/dashboardController');
 router.post('/auth/login', authController.login);
 router.post('/auth/register', authController.register);
 router.get('/auth/profile', auth, authController.getProfile);
+router.put('/auth/change-password', auth, authController.changePassword);
 
 // 2. Dashboard & Reports routes
 router.get('/dashboard/stats', auth, dashboardController.getStats);

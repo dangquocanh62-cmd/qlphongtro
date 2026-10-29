@@ -18,6 +18,9 @@ public interface ApiService {
     @GET("auth/profile")
     Call<ApiResponse<User>> getProfile();
 
+    @PUT("auth/change-password")
+    Call<ApiResponse<Void>> changePassword(@Body ChangePasswordRequest request);
+
     // 2. Dashboard Stats & Reports
     @GET("dashboard/stats")
     Call<ApiResponse<DashboardStats>> getDashboardStats(@Query("month") Integer month, @Query("year") Integer year);
