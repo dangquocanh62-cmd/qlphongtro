@@ -9,9 +9,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.nhatro.app.databinding.ActivityMeterReadingListBinding;
 import com.nhatro.app.ui.adapters.MeterReadingAdapter;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.viewmodel.MeterReadingViewModel;
 
-public class MeterReadingListActivity extends AppCompatActivity {
+public class MeterReadingListActivity extends BaseActivity {
     private ActivityMeterReadingListBinding binding;
     private MeterReadingViewModel viewModel;
     private MeterReadingAdapter adapter;

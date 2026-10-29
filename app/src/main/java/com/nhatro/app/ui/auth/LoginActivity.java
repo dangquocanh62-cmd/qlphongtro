@@ -12,11 +12,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.nhatro.app.R;
 import com.nhatro.app.data.api.ApiClient;
 import com.nhatro.app.databinding.ActivityLoginBinding;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.ui.main.MainActivity;
 import com.nhatro.app.utils.SharedPrefsHelper;
 import com.nhatro.app.viewmodel.AuthViewModel;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
     private ActivityLoginBinding binding;
     private AuthViewModel viewModel;
 

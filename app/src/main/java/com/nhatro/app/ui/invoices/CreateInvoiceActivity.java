@@ -24,6 +24,7 @@ import com.nhatro.app.data.model.InvoiceItem;
 import com.nhatro.app.data.model.MeterReading;
 import com.nhatro.app.data.model.ServiceItem;
 import com.nhatro.app.databinding.ActivityCreateInvoiceBinding;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.utils.CurrencyUtils;
 import com.nhatro.app.utils.DatePickerHelper;
 import com.nhatro.app.viewmodel.ContractViewModel;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class CreateInvoiceActivity extends AppCompatActivity {
+public class CreateInvoiceActivity extends BaseActivity {
     private ActivityCreateInvoiceBinding binding;
     private InvoiceViewModel invoiceViewModel;
     private ContractViewModel contractViewModel;

@@ -13,6 +13,7 @@ import com.nhatro.app.R;
 import com.nhatro.app.data.model.Contract;
 import com.nhatro.app.data.model.Tenant;
 import com.nhatro.app.databinding.ActivityContractDetailBinding;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.utils.CurrencyUtils;
 import com.nhatro.app.utils.DateUtils;
 import com.nhatro.app.viewmodel.ContractViewModel;
@@ -20,7 +21,7 @@ import com.nhatro.app.viewmodel.TenantViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContractDetailActivity extends AppCompatActivity {
+public class ContractDetailActivity extends BaseActivity {
     private ActivityContractDetailBinding binding;
     private ContractViewModel viewModel;
     private TenantViewModel tenantViewModel;

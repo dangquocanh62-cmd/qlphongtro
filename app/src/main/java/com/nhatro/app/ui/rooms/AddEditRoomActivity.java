@@ -7,9 +7,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.nhatro.app.R;
 import com.nhatro.app.data.model.Room;
 import com.nhatro.app.databinding.ActivityAddEditRoomBinding;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.viewmodel.RoomViewModel;
 
-public class AddEditRoomActivity extends AppCompatActivity {
+public class AddEditRoomActivity extends BaseActivity {
     private ActivityAddEditRoomBinding binding;
     private RoomViewModel viewModel;
     private Room existingRoom;

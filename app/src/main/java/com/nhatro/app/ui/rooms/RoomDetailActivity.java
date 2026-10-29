@@ -11,12 +11,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.nhatro.app.R;
 import com.nhatro.app.data.model.Room;
 import com.nhatro.app.databinding.ActivityRoomDetailBinding;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.ui.contracts.AddEditContractActivity;
 import com.nhatro.app.utils.CurrencyUtils;
 import com.nhatro.app.utils.DateUtils;
 import com.nhatro.app.viewmodel.RoomViewModel;
 
-public class RoomDetailActivity extends AppCompatActivity {
+public class RoomDetailActivity extends BaseActivity {
     private ActivityRoomDetailBinding binding;
     private RoomViewModel viewModel;
     private Room room;

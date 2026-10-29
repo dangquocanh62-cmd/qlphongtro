@@ -6,9 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.nhatro.app.data.model.ServiceItem;
 import com.nhatro.app.databinding.ActivityAddEditServiceBinding;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.viewmodel.ServiceViewModel;
 
-public class AddEditServiceActivity extends AppCompatActivity {
+public class AddEditServiceActivity extends BaseActivity {
     private ActivityAddEditServiceBinding binding;
     private ServiceViewModel viewModel;
     private ServiceItem existingService;

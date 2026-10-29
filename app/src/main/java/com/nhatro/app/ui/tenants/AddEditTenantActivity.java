@@ -6,10 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.nhatro.app.data.model.Tenant;
 import com.nhatro.app.databinding.ActivityAddEditTenantBinding;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.utils.DatePickerHelper;
 import com.nhatro.app.viewmodel.TenantViewModel;
 
-public class AddEditTenantActivity extends AppCompatActivity {
+public class AddEditTenantActivity extends BaseActivity {
     private ActivityAddEditTenantBinding binding;
     private TenantViewModel viewModel;
     private Tenant existingTenant;

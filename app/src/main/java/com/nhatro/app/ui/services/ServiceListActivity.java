@@ -10,9 +10,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.nhatro.app.databinding.ActivityServiceListBinding;
 import com.nhatro.app.ui.adapters.ServiceAdapter;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.viewmodel.ServiceViewModel;
 
-public class ServiceListActivity extends AppCompatActivity {
+public class ServiceListActivity extends BaseActivity {
     private ActivityServiceListBinding binding;
     private ServiceViewModel viewModel;
     private ServiceAdapter adapter;

@@ -12,6 +12,7 @@ import com.nhatro.app.data.model.Room;
 import com.nhatro.app.data.model.Tenant;
 import com.nhatro.app.databinding.ActivityAddEditContractBinding;
 import com.nhatro.app.utils.DatePickerHelper;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.utils.DateUtils;
 import com.nhatro.app.viewmodel.ContractViewModel;
 import com.nhatro.app.viewmodel.RoomViewModel;
@@ -19,7 +20,7 @@ import com.nhatro.app.viewmodel.TenantViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddEditContractActivity extends AppCompatActivity {
+public class AddEditContractActivity extends BaseActivity {
     private ActivityAddEditContractBinding binding;
     private ContractViewModel contractViewModel;
     private RoomViewModel roomViewModel;

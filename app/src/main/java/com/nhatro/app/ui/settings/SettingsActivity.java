@@ -15,12 +15,13 @@ import com.nhatro.app.data.model.ApiResponse;
 import com.nhatro.app.data.model.ChangePasswordRequest;
 import com.nhatro.app.databinding.ActivitySettingsBinding;
 import com.nhatro.app.ui.auth.LoginActivity;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.ui.meter.MeterReadingListActivity;
 import com.nhatro.app.ui.services.ServiceListActivity;
 import com.nhatro.app.utils.Constants;
 import com.nhatro.app.utils.SharedPrefsHelper;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     private ActivitySettingsBinding binding;
     private SharedPrefsHelper prefs;

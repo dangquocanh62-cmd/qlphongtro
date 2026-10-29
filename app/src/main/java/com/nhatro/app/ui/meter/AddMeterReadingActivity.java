@@ -12,6 +12,7 @@ import com.nhatro.app.data.model.Room;
 import com.nhatro.app.data.model.ServiceItem;
 import com.nhatro.app.databinding.ActivityAddMeterReadingBinding;
 import com.nhatro.app.utils.CurrencyUtils;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.utils.DatePickerHelper;
 import com.nhatro.app.viewmodel.MeterReadingViewModel;
 import com.nhatro.app.viewmodel.RoomViewModel;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class AddMeterReadingActivity extends AppCompatActivity {
+public class AddMeterReadingActivity extends BaseActivity {
     private ActivityAddMeterReadingBinding binding;
     private MeterReadingViewModel meterViewModel;
     private RoomViewModel roomViewModel;

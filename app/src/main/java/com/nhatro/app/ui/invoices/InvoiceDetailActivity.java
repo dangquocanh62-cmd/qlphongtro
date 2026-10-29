@@ -30,6 +30,7 @@ import com.nhatro.app.data.model.ServiceItem;
 import com.nhatro.app.databinding.ActivityInvoiceDetailBinding;
 import com.nhatro.app.ui.adapters.InvoiceItemAdapter;
 import com.nhatro.app.ui.adapters.PaymentAdapter;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.utils.CurrencyUtils;
 import com.nhatro.app.utils.DateUtils;
 import com.nhatro.app.utils.InvoiceExportHelper;
@@ -43,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-public class InvoiceDetailActivity extends AppCompatActivity {
+public class InvoiceDetailActivity extends BaseActivity {
     private ActivityInvoiceDetailBinding binding;
     private InvoiceViewModel invoiceViewModel;
     private PaymentViewModel paymentViewModel;

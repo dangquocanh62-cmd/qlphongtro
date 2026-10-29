@@ -16,6 +16,7 @@ import com.nhatro.app.R;
 import com.nhatro.app.data.api.ApiClient;
 import com.nhatro.app.databinding.ActivityMainBinding;
 import com.nhatro.app.ui.auth.LoginActivity;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.ui.contracts.ContractListFragment;
 import com.nhatro.app.ui.dashboard.DashboardFragment;
 import com.nhatro.app.ui.invoices.InvoiceListFragment;
@@ -26,7 +27,7 @@ import com.nhatro.app.ui.settings.SettingsActivity;
 import com.nhatro.app.ui.tenants.TenantListFragment;
 import com.nhatro.app.utils.SharedPrefsHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private ActivityMainBinding binding;
 
     @Override

@@ -8,10 +8,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.nhatro.app.databinding.ActivityRegisterBinding;
+import com.nhatro.app.ui.base.BaseActivity;
 import com.nhatro.app.ui.main.MainActivity;
 import com.nhatro.app.viewmodel.AuthViewModel;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends BaseActivity {
     private ActivityRegisterBinding binding;
     private AuthViewModel viewModel;
 
