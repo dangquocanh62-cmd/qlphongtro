@@ -110,29 +110,29 @@ d:\QLPhongtroj\
 
 ---
 
-## 5. Hướng Dẫn Cài Đặt & Chạy Hệ Thống
+## 5. Hướng Dẫn Cài Đặt & Sử Dụng
 
-### Bước 1: Khởi động RESTful API Backend
-- **Chạy bằng file batch (1-Click)**: Nhấp đúp chuột vào file `KHOI_DONG_SERVER.bat` tại thư mục gốc. File sẽ tự động liên kết cổng và khởi động API Server.
-- **Hoặc chạy thủ công qua Terminal**:
-  ```bash
-  cd backend
-  npm install
-  npm start
-  ```
-  *(Backend đã được tích hợp sẵn kết nối Cloud Database, khi mang sang máy khác chạy sẽ **tự động kết nối và có sẵn dữ liệu** mà không cần cài đặt PostgreSQL).*
+### 📱 Cách 1: Cài đặt trực tiếp lên Điện Thoại (Nhanh nhất - Không cần máy tính)
+Hệ thống hiện tại đã hoạt động **hoàn toàn trên Cloud 24/7** (Backend Node.js trên Render + Database PostgreSQL trên Neon Singapore).
+1. Copy file **`QLPhongTro.apk`** (nằm ngay tại thư mục gốc dự án) gửi sang điện thoại Android của bạn qua Zalo / Google Drive / cáp USB.
+2. Bấm vào file `.apk` trên điện thoại để tiến hành cài đặt.
+3. **Mở ứng dụng lên và đăng nhập ngay lập tức:**
+   - Ứng dụng đã được cấu hình mặc định tự động kết nối máy chủ Cloud: `https://qlphongtro-2y3o.onrender.com/api/`.
+   - **Không cần bật máy tính, không cần cấu hình IP, hoạt động trên mọi mạng 4G, 5G hoặc Wi-Fi bất kỳ!**
 
-### Bước 2: Chạy Ứng Dụng Android
-1. **Mở dự án trong Android Studio**:
-   - Khởi động **Android Studio**, chọn **Open** và duyệt đến thư mục dự án `QLPhongtroj`.
-   - Chờ Gradle đồng bộ các thư viện.
-2. **Chạy ứng dụng**:
-   - Chọn thiết bị máy ảo (Android Emulator) hoặc điện thoại thật.
-   - Nhấn **Run 'app'** (hoặc phím tắt `Shift + F10`).
-   - File APK bản Debug được xuất tại: `app/build/outputs/apk/debug/app-debug.apk`.
-3. **Cấu hình máy chủ API trên ứng dụng**:
-   - Mặc định kết nối: `http://10.0.2.2:3000/api/` (Android Emulator) hoặc `http://127.0.0.1:3000/api/`.
-   - Nếu chạy trên điện thoại thật qua mạng Wi-Fi: Vào trang **Cài đặt & Tài khoản** -> chọn **Địa chỉ máy chủ (Server API)** -> nhập IP máy tính chạy backend (VD: `http://192.168.1.15:3000/api/`).
+---
+
+### 💻 Cách 2: Chạy & Phát triển trong Android Studio / Máy ảo (Dành cho Lập trình viên)
+1. **Khởi động Backend (Tùy chọn)**:
+   - Nếu muốn chạy máy chủ cục bộ: Nhấp đúp chuột vào file `KHOI_DONG_SERVER.bat` tại thư mục gốc.
+   - Hoặc chạy lệnh: `cd backend && npm start`.
+2. **Mở dự án trong Android Studio**:
+   - Khởi động **Android Studio**, chọn **Open** và duyệt đến thư mục `QLPhongtroj`.
+   - Chờ Gradle đồng bộ các thư viện và nhấn nút **Run 'app'** (hoặc phím tắt `Shift + F10`).
+3. **Cấu hình địa chỉ máy chủ (Server API)**:
+   - Ứng dụng mặc định trỏ tới Cloud Render: `https://qlphongtro-2y3o.onrender.com/api/`.
+   - Nếu bạn muốn chuyển về dùng Backend cục bộ trên máy: Vào **Cài đặt & Tài khoản** -> chọn **Địa chỉ máy chủ (Server API)** -> nhập `http://10.0.2.2:3000/api/` (máy ảo) hoặc `http://127.0.0.1:3000/api/`.
+
 
 ---
 
