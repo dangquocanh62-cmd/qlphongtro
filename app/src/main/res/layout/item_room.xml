@@ -28,6 +28,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/tvStatusBadge"
+                android:layout_marginEnd="8dp"
                 android:layout_centerVertical="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -46,6 +48,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp"
                     tools:text="Tầng 1 • 22.5 m²" />
@@ -79,6 +83,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/tvPrice"
+                android:layout_marginEnd="8dp"
                 android:layout_centerVertical="true"
                 android:text="Giá thuê tháng:"
                 android:textColor="@color/text_secondary"
