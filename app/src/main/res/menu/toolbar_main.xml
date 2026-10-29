@@ -8,12 +8,8 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_services"
-        android:title="Danh mục dịch vụ"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_logout"
-        android:title="Đăng xuất"
-        app:showAsAction="never" />
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="Cài đặt"
+        app:showAsAction="always" />
 </menu>

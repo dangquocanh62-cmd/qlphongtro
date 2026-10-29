@@ -22,6 +22,7 @@ import com.nhatro.app.ui.invoices.InvoiceListFragment;
 import com.nhatro.app.ui.meter.MeterReadingListActivity;
 import com.nhatro.app.ui.rooms.RoomListFragment;
 import com.nhatro.app.ui.services.ServiceListActivity;
+import com.nhatro.app.ui.settings.SettingsActivity;
 import com.nhatro.app.ui.tenants.TenantListFragment;
 import com.nhatro.app.utils.SharedPrefsHelper;
 
@@ -125,11 +126,8 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_meters) {
             startActivity(new Intent(this, MeterReadingListActivity.class));
             return true;
-        } else if (id == R.id.action_services) {
-            startActivity(new Intent(this, ServiceListActivity.class));
-            return true;
-        } else if (id == R.id.action_logout) {
-            logout();
+        } else if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
