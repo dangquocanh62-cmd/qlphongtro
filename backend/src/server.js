@@ -1,6 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+
+const envPath = path.join(__dirname, '../.env');
+const envExamplePath = path.join(__dirname, '../.env.example');
+if (!fs.existsSync(envPath) && fs.existsSync(envExamplePath)) {
+  fs.copyFileSync(envExamplePath, envPath);
+}
+
+require('dotenv').config({ path: envPath });
 
 const db = require('./config/db');
 const apiRoutes = require('./routes/api');
