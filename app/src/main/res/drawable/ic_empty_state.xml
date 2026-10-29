@@ -1,0 +1,34 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+    <!-- Soft circular container -->
+    <path
+        android:fillColor="@color/primary_container"
+        android:pathData="M36,36m-32,0a32,32 0,1 1,64 0a32,32 0,1 1,-64 0" />
+    <!-- Box Body -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="@color/primary"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M22,29L22,47C22,49.2 23.8,51 26,51L46,51C48.2,51 50,49.2 50,47L50,29" />
+    <!-- Box Opening / Flap -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="@color/primary"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M19,29L53,29L48,22L24,22Z" />
+    <!-- Center Fold Notch -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="@color/primary_light"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M32,37L40,37" />
+</vector>

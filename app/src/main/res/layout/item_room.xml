@@ -2,12 +2,13 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="14dp"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardCornerRadius="@dimen/radius_card"
+    app:cardElevation="0dp"
     app:strokeWidth="1dp"
     app:strokeColor="@color/divider"
     app:cardBackgroundColor="@color/surface">
@@ -35,19 +36,19 @@
                     android:id="@+id/tvRoomCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="P101"
                     android:textColor="@color/primary_dark"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="P101" />
 
                 <TextView
                     android:id="@+id/tvFloorArea"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="Tầng 1 • 22.5 m²"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="12sp"
+                    tools:text="Tầng 1 • 22.5 m²" />
             </LinearLayout>
 
             <TextView
@@ -58,8 +59,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/bg_badge_available"
-                android:text="Còn trống"
-                android:textColor="@color/status_available_text" />
+                android:textColor="@color/status_available_text"
+                tools:text="Còn trống" />
         </RelativeLayout>
 
         <!-- Divider -->
@@ -81,7 +82,7 @@
                 android:layout_centerVertical="true"
                 android:text="Giá thuê tháng:"
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvPrice"
@@ -89,10 +90,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="3.000.000 đ"
                 android:textColor="@color/primary"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="3.000.000 đ" />
         </RelativeLayout>
 
         <!-- Tenant Info Row (if Occupied) -->
@@ -123,10 +124,10 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Khách: Lê Hoàng Long"
                 android:textColor="@color/text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="Khách: Lê Hoàng Long" />
 
             <ImageView
                 android:layout_width="14dp"
@@ -141,10 +142,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="0987654321"
                 android:textColor="@color/primary"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="0987654321" />
         </LinearLayout>
 
         <!-- Note Text -->
@@ -155,9 +156,9 @@
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Ghi chú phòng..."
             android:textColor="@color/text_muted"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="Ghi chú phòng..." />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

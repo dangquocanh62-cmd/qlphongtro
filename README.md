@@ -86,27 +86,16 @@ d:\QLPhongtroj\
 ## 4. Hướng Dẫn Cài Đặt & Chạy Hệ Thống
 
 ### Bước 1: Khởi động RESTful API Backend
-1. Mở cửa sổ dòng lệnh tại thư mục `backend`:
-   ```bash
-   cd d:\QLPhongtroj\backend
-   ```
-2. Cấu hình thông tin PostgreSQL trong file `.env` (nếu đã cài PostgreSQL trên máy):
-   ```properties
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_NAME=qlphongtro
-   DB_USER=postgres
-   DB_PASSWORD=postgres
-   ```
-3. Khởi tạo cơ sở dữ liệu trên PostgreSQL (tự động chạy schema và nạp dữ liệu mẫu):
-   ```bash
-   npm run migrate
-   ```
-4. Khởi động máy chủ API:
-   ```bash
-   npm start
-   ```
-   *Ghi chú*: Nếu máy chưa cài PostgreSQL hoặc service PostgreSQL đang tắt, server sẽ tự động chuyển sang chế độ **In-Memory Store** với đầy đủ dữ liệu mẫu của 10 bảng, giúp bạn có thể chạy thử nghiệm và kiểm thử ngay lập tức mà không bị gián đoạn!
+- **Cách nhanh nhất (1-Click)**: Nhấp đúp chuột vào file `KHOI_DONG_SERVER.bat` tại thư mục gốc `d:\QLPhongtroj`. File này sẽ tự động:
+  1. Khởi động PostgreSQL 16 trong WSL.
+  2. Kết nối cổng 3000 cho máy ảo Android Emulator (`adb reverse`).
+  3. Khởi động API Server Node.js kết nối trực tiếp đến PostgreSQL.
+
+- **Hoặc chạy thủ công qua Terminal**:
+  ```bash
+  cd d:\QLPhongtroj\backend
+  npm start
+  ```
 
 ### Bước 2: Chạy Ứng Dụng Android
 1. **Mở dự án**:

@@ -66,13 +66,51 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadFragment(Fragment fragment, String title) {
+    public void loadFragment(Fragment fragment, String title) {
         if (binding.toolbar != null) {
             binding.toolbar.setTitle(title);
         }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .commit();
+    }
+
+    public void navigateToContracts(boolean filterExpiring) {
+        ContractListFragment fragment = new ContractListFragment();
+        if (filterExpiring) {
+            Bundle args = new Bundle();
+            args.putBoolean("filter_expiring", true);
+            fragment.setArguments(args);
+        }
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_contracts);
+        loadFragment(fragment, "Quản Lý Hợp Đồng");
+    }
+
+    public void navigateToInvoices(String statusFilter) {
+        InvoiceListFragment fragment = new InvoiceListFragment();
+        if (statusFilter != null) {
+            Bundle args = new Bundle();
+            args.putString("status_filter", statusFilter);
+            fragment.setArguments(args);
+        }
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_invoices);
+        loadFragment(fragment, "Hóa Đơn & Thu Chi");
+    }
+
+    public void navigateToRooms(String statusFilter) {
+        RoomListFragment fragment = new RoomListFragment();
+        if (statusFilter != null) {
+            Bundle args = new Bundle();
+            args.putString("status_filter", statusFilter);
+            fragment.setArguments(args);
+        }
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_rooms);
+        loadFragment(fragment, "Quản Lý Phòng Trọ");
+    }
+
+    public void navigateToTenants() {
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_tenants);
+        loadFragment(new TenantListFragment(), "Quản Lý Khách Thuê");
     }
 
     @Override
@@ -84,14 +122,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_services) {
-            startActivity(new Intent(this, ServiceListActivity.class));
-            return true;
-        } else if (id == R.id.action_meters) {
+        if (id == R.id.action_meters) {
             startActivity(new Intent(this, MeterReadingListActivity.class));
             return true;
-        } else if (id == R.id.action_config_server) {
-            showConfigServerDialog();
+        } else if (id == R.id.action_services) {
+            startActivity(new Intent(this, ServiceListActivity.class));
             return true;
         } else if (id == R.id.action_logout) {
             logout();

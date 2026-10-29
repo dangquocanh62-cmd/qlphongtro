@@ -30,6 +30,7 @@
     <!-- Contracts -->
     <string name="title_contracts">Hợp Đồng Thuê</string>
     <string name="contract_active">Đang hiệu lực</string>
+    <string name="contract_expiring">Sắp hết hạn</string>
     <string name="contract_ended">Đã kết thúc</string>
     <string name="add_contract">Lập hợp đồng mới</string>
 
@@ -50,10 +51,50 @@
     <string name="title_meters">Ghi Chỉ Số Điện Nước</string>
     <string name="add_reading">Nhập chỉ số tháng</string>
 
-    <!-- Common -->
+    <!-- Buttons & Actions -->
     <string name="save">Lưu lại</string>
     <string name="cancel">Hủy</string>
     <string name="delete">Xóa</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="btn_view_detail">Xem chi tiết</string>
+    <string name="btn_payment">Thanh toán</string>
+    <string name="btn_share_invoice">Chia sẻ hóa đơn</string>
+    <string name="btn_print_pdf">In hóa đơn (PDF)</string>
+    <string name="btn_meters">Điện nước</string>
+    <string name="btn_services">Bảng dịch vụ</string>
+    <string name="btn_bulk_generate">Tính tự động tất cả</string>
+    <string name="btn_add_fee">Thêm phụ phí</string>
+    <string name="btn_confirm">Xác nhận</string>
+    <string name="btn_close">Đóng</string>
+
+    <!-- Sections & KPI -->
+    <string name="kpi_available_rooms">Phòng trống</string>
+    <string name="kpi_occupied_rooms">Phòng đang thuê</string>
+    <string name="kpi_collected_revenue">Đã thu tháng này</string>
+    <string name="kpi_unpaid_debt">Nợ chưa thu</string>
+    <string name="section_quick_actions">THAO TÁC NHANH</string>
+    <string name="section_room_status">TÌNH TRẠNG PHÒNG TRỌ</string>
+    <string name="section_finances">TÀI CHÍNH THÁNG NÀY</string>
+
+    <!-- Dashboard Titles &amp; Labels -->
+    <string name="dashboard_welcome_admin">Xin chào, Quản trị viên</string>
+    <string name="dashboard_today">Hôm nay</string>
+    <string name="dashboard_attention_title">Cần chú ý</string>
+    <string name="dashboard_collected_label">Đã thu được</string>
+    <string name="dashboard_unpaid_label">Nợ chưa thu</string>
+    <string name="dashboard_workflow_title">QUY TRÌNH HÀNG THÁNG</string>
+    <string name="dashboard_step1_meter">1. Ghi điện nước</string>
+    <string name="dashboard_step2_invoice">2. Tính hóa đơn</string>
+    <string name="dashboard_step3_payment">3. Thu tiền</string>
+    <string name="dashboard_performance_title">HIỆU SUẤT &amp; DOANH THU</string>
+    <string name="btn_quick_collect">Thu tiền</string>
+    <string name="btn_quick_call">Gọi điện</string>
+    <string name="btn_quick_share">Chia sẻ</string>
+    <string name="label_view_invoices">Xem hóa đơn</string>
+    <string name="label_collect_debt_now">Thu nợ ngay</string>
+    <string name="label_view_vacant_rooms">Xem phòng trống</string>
+
+    <!-- Common -->
     <string name="search_hint">Tìm kiếm...</string>
     <string name="loading">Đang tải dữ liệu...</string>
     <string name="empty_data">Chưa có dữ liệu nào</string>

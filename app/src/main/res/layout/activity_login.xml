@@ -46,7 +46,7 @@
                 android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:text="Hệ thống quản lý phòng &amp; thu chi tự động"
-                android:textColor="#BFDBFE"
+                android:textColor="@color/text_on_gradient_muted"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -56,8 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="-24dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="0dp"
             app:strokeColor="@color/divider"
             app:strokeWidth="1dp"
             app:cardBackgroundColor="@color/surface">
@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:text="Đăng nhập tài khoản"
                     android:textColor="@color/text_primary"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -82,7 +82,7 @@
                     android:layout_marginTop="4dp"
                     android:text="Nhập email và mật khẩu của Chủ trọ / Quản lý"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilEmail"
@@ -103,7 +103,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:text="admin@nhatro.vn"
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -127,7 +126,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:text="123456"
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -149,8 +147,8 @@
                     android:textColor="@color/text_white"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:cornerRadius="14dp"
-                    app:elevation="3dp" />
+                    app:cornerRadius="@dimen/radius_button"
+                    app:elevation="0dp" />
 
                 <!-- Link to RegisterActivity -->
                 <LinearLayout
@@ -191,7 +189,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💡 Tài khoản mẫu sẵn có:"
+                        android:text="Tài khoản mẫu sẵn có:"
                         android:textColor="@color/status_occupied_text"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -203,7 +201,7 @@
                         android:layout_marginTop="4dp"
                         android:text="Chủ trọ: admin@nhatro.vn • MK: 123456\nQuản lý: quanly@nhatro.vn • MK: 123456"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -219,7 +217,7 @@
             android:layout_marginBottom="32dp"
             android:text="@string/config_server"
             android:textColor="@color/primary"
-            app:cornerRadius="20dp"
+            app:cornerRadius="@dimen/radius_button"
             app:icon="@drawable/ic_server"
             app:iconTint="@color/primary"
             app:strokeColor="@color/divider" />

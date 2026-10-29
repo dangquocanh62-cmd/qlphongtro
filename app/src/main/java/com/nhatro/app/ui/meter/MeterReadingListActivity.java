@@ -38,6 +38,16 @@ public class MeterReadingListActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         adapter = new MeterReadingAdapter();
+        adapter.setOnMissingReadingClickListener((group, isElectric) -> {
+            Intent intent = new Intent(this, AddMeterReadingActivity.class);
+            if (group.getRoomId() != null) {
+                intent.putExtra("extra_room_id", group.getRoomId());
+            }
+            intent.putExtra("extra_is_electric", isElectric);
+            intent.putExtra("extra_month", group.getMonth());
+            intent.putExtra("extra_year", group.getYear());
+            startActivity(intent);
+        });
         binding.rvMeterReadings.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMeterReadings.setAdapter(adapter);
     }

@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -35,8 +36,8 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/divider"
                 app:cardBackgroundColor="@color/surface">
@@ -55,7 +56,7 @@
                             android:id="@+id/tvDetailRoomCode"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="P101"
+                            tools:text="P101"
                             android:textColor="@color/primary_dark"
                             android:textSize="24sp"
                             android:textStyle="bold" />
@@ -76,18 +77,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Tầng 1 • Diện tích 22.5 m²"
+                        tools:text="Tầng 1 • Diện tích 22.5 m²"
                         android:textColor="@color/text_secondary"
-                        android:textSize="15sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tvDetailPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Giá thuê: 3.000.000 đ / tháng"
+                        tools:text="Giá thuê: 3.000.000 đ / tháng"
                         android:textColor="@color/primary"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <View
@@ -122,8 +123,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:visibility="gone"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/divider"
                 app:cardBackgroundColor="@color/surface">
@@ -147,7 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Khách đại diện: Lê Hoàng Long"
+                        tools:text="Khách đại diện: Lê Hoàng Long"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp" />
 
@@ -156,7 +157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Số điện thoại: 0987654321"
+                        tools:text="Số điện thoại: 0987654321"
                         android:textColor="@color/text_secondary"
                         android:textSize="14sp" />
 
@@ -165,9 +166,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Hợp đồng: 01/01/2024 -> 01/01/2025"
+                        tools:text="Hợp đồng: 01/01/2024 -> 01/01/2025"
                         android:textColor="@color/text_muted"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnViewContract"
@@ -189,7 +190,7 @@
                 android:text="Lập hợp đồng cho thuê phòng này"
                 android:textStyle="bold"
                 android:visibility="gone"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/radius_button" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditRoom"
@@ -198,7 +199,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="12dp"
                 android:text="Chỉnh sửa thông tin phòng"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/radius_button" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeleteRoom"

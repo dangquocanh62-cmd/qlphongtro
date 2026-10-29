@@ -22,8 +22,18 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.Contra
         void onContractClick(Contract contract);
     }
 
+    public interface OnContractCallListener {
+        void onContractCall(Contract contract);
+    }
+
+    private OnContractCallListener callListener;
+
     public void setOnContractClickListener(OnContractClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnContractCallListener(OnContractCallListener callListener) {
+        this.callListener = callListener;
     }
 
     public void setContracts(List<Contract> contracts) {
@@ -61,6 +71,20 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.Contra
                     listener.onContractClick(contracts.get(pos));
                 }
             });
+
+            binding.btnCallContractTenant.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    Contract c = contracts.get(pos);
+                    if (callListener != null) {
+                        callListener.onContractCall(c);
+                    } else if (c.getTenantPhone() != null && !c.getTenantPhone().trim().isEmpty()) {
+                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_DIAL);
+                        intent.setData(android.net.Uri.parse("tel:" + c.getTenantPhone().trim()));
+                        itemView.getContext().startActivity(intent);
+                    }
+                }
+            });
         }
 
         public void bind(Contract contract) {
@@ -78,10 +102,27 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.Contra
                 binding.tvContractStatus.setText("Hiệu lực");
                 binding.tvContractStatus.setBackgroundResource(R.drawable.bg_badge_available);
                 binding.tvContractStatus.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.status_available_text));
+
+                if (contract.isExpired()) {
+                    int daysPast = Math.abs(contract.calculateDaysRemaining());
+                    binding.tvContractExpiryBadge.setVisibility(View.VISIBLE);
+                    binding.tvContractExpiryBadge.setText("Quá hạn " + daysPast + " ngày");
+                    binding.tvContractExpiryBadge.setBackgroundResource(R.drawable.bg_badge_unpaid);
+                    binding.tvContractExpiryBadge.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.status_unpaid_text));
+                } else if (contract.isExpiringSoon()) {
+                    int daysLeft = contract.calculateDaysRemaining();
+                    binding.tvContractExpiryBadge.setVisibility(View.VISIBLE);
+                    binding.tvContractExpiryBadge.setText(daysLeft == 0 ? "Hết hạn hôm nay" : ("Còn " + daysLeft + " ngày"));
+                    binding.tvContractExpiryBadge.setBackgroundResource(R.drawable.bg_badge_partial);
+                    binding.tvContractExpiryBadge.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.status_partial_text));
+                } else {
+                    binding.tvContractExpiryBadge.setVisibility(View.GONE);
+                }
             } else {
                 binding.tvContractStatus.setText("Đã kết thúc");
                 binding.tvContractStatus.setBackgroundResource(R.drawable.bg_badge_maintenance);
                 binding.tvContractStatus.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.status_maintenance_text));
+                binding.tvContractExpiryBadge.setVisibility(View.GONE);
             }
 
             if (contract.getRoommateCount() > 0) {
@@ -89,6 +130,12 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.Contra
                 binding.tvRoommateInfo.setText("+ " + contract.getRoommateCount() + " người ở cùng");
             } else {
                 binding.tvRoommateInfo.setVisibility(View.GONE);
+            }
+
+            if (contract.getTenantPhone() != null && !contract.getTenantPhone().trim().isEmpty()) {
+                binding.btnCallContractTenant.setVisibility(View.VISIBLE);
+            } else {
+                binding.btnCallContractTenant.setVisibility(View.GONE);
             }
         }
     }

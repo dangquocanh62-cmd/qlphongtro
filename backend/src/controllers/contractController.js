@@ -3,14 +3,22 @@ const db = require('../config/db');
 exports.getContracts = async (req, res) => {
   try {
     const userId = req.user?.id || 1;
-    const { status, roomId, tenantId } = req.query;
+    const { status, roomId, tenantId, expiring } = req.query;
 
     if (db.isConnected) {
       let query = `
         SELECT c.*, 
                r.room_code, r.floor, r.area,
                t.full_name as tenant_name, t.phone as tenant_phone, t.id_card as tenant_id_card,
-               (SELECT COUNT(*) FROM contract_tenants ct WHERE ct.contract_id = c.id) as roommate_count
+               (SELECT COUNT(*) FROM contract_tenants ct WHERE ct.contract_id = c.id) as roommate_count,
+               CASE 
+                 WHEN c.end_date IS NOT NULL THEN (c.end_date - CURRENT_DATE)
+                 ELSE NULL 
+               END as days_left,
+               CASE 
+                 WHEN c.status = 'ACTIVE' AND c.end_date IS NOT NULL AND (c.end_date - CURRENT_DATE) >= 0 AND (c.end_date - CURRENT_DATE) <= 30 THEN true
+                 ELSE false
+               END as is_expiring
         FROM contracts c
         JOIN rooms r ON c.room_id = r.id
         JOIN tenants t ON c.tenant_id = t.id
@@ -29,6 +37,9 @@ exports.getContracts = async (req, res) => {
         params.push(tenantId);
         query += ` AND c.tenant_id = $${params.length}`;
       }
+      if (expiring === 'true') {
+        query += ` AND c.status = 'ACTIVE' AND c.end_date IS NOT NULL AND (c.end_date - CURRENT_DATE) >= 0 AND (c.end_date - CURRENT_DATE) <= 30`;
+      }
       query += ' ORDER BY c.id DESC';
       const result = await db.query(query, params);
       return res.json({ success: true, data: result.rows });
@@ -44,10 +55,33 @@ exports.getContracts = async (req, res) => {
         contracts = contracts.filter(c => c.tenant_id === parseInt(tenantId, 10));
       }
 
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+      if (expiring === 'true') {
+        contracts = contracts.filter(c => {
+          if (c.status !== 'ACTIVE' || !c.end_date) return false;
+          const end = new Date(c.end_date);
+          end.setHours(0, 0, 0, 0);
+          return end >= now && end <= in30Days;
+        });
+      }
+
       const enriched = contracts.map(c => {
         const room = db.memoryStore.rooms.find(r => r.id === c.room_id) || {};
         const tenant = db.memoryStore.tenants.find(t => t.id === c.tenant_id) || {};
         const roommates = db.memoryStore.contract_tenants.filter(ct => ct.contract_id === c.id);
+
+        let daysLeft = null;
+        let isExpiring = false;
+        if (c.end_date) {
+          const end = new Date(c.end_date);
+          end.setHours(0, 0, 0, 0);
+          daysLeft = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          isExpiring = c.status === 'ACTIVE' && daysLeft >= 0 && daysLeft <= 30;
+        }
+
         return {
           ...c,
           room_code: room.room_code || '',
@@ -56,7 +90,9 @@ exports.getContracts = async (req, res) => {
           tenant_name: tenant.full_name || '',
           tenant_phone: tenant.phone || '',
           tenant_id_card: tenant.id_card || '',
-          roommate_count: roommates.length
+          roommate_count: roommates.length,
+          days_left: daysLeft,
+          is_expiring: isExpiring
         };
       });
 
@@ -92,7 +128,18 @@ exports.getContractById = async (req, res) => {
         JOIN tenants t ON ct.tenant_id = t.id
         WHERE ct.contract_id = $1
       `, [id]);
-      contract.roommates = roommatesRes.rows;
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      let daysLeft = null;
+      let isExpiring = false;
+      if (contract.end_date) {
+        const end = new Date(contract.end_date);
+        end.setHours(0, 0, 0, 0);
+        daysLeft = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        isExpiring = contract.status === 'ACTIVE' && daysLeft >= 0 && daysLeft <= 30;
+      }
+      contract.days_left = daysLeft;
+      contract.is_expiring = isExpiring;
 
       return res.json({ success: true, data: contract });
     } else {
@@ -107,6 +154,17 @@ exports.getContractById = async (req, res) => {
         .map(ct => ct.tenant_id);
       const roommates = db.memoryStore.tenants.filter(t => roommateIds.includes(t.id));
 
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      let daysLeft = null;
+      let isExpiring = false;
+      if (contract.end_date) {
+        const end = new Date(contract.end_date);
+        end.setHours(0, 0, 0, 0);
+        daysLeft = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        isExpiring = contract.status === 'ACTIVE' && daysLeft >= 0 && daysLeft <= 30;
+      }
+
       return res.json({
         success: true,
         data: {
@@ -119,7 +177,9 @@ exports.getContractById = async (req, res) => {
           tenant_phone: tenant.phone || '',
           tenant_id_card: tenant.id_card || '',
           tenant_hometown: tenant.hometown || '',
-          roommates
+          roommates,
+          days_left: daysLeft,
+          is_expiring: isExpiring
         }
       });
     }
@@ -131,7 +191,7 @@ exports.getContractById = async (req, res) => {
 exports.createContract = async (req, res) => {
   try {
     const userId = req.user?.id || 1;
-    const { room_id, tenant_id, start_date, end_date, deposit, rent_price, roommate_ids } = req.body;
+    const { room_id, tenant_id, start_date, end_date, deposit, rent_price, roommate_ids, force_terminate_existing } = req.body;
     if (!room_id || !tenant_id || !start_date || rent_price === undefined) {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp phòng, khách đại diện, ngày bắt đầu và giá thuê' });
     }
@@ -142,7 +202,7 @@ exports.createContract = async (req, res) => {
 
     if (db.isConnected) {
       // Check room availability for this user
-      const roomCheck = await db.query('SELECT status FROM rooms WHERE id = $1 AND user_id = $2', [room_id, userId]);
+      const roomCheck = await db.query('SELECT status, room_code FROM rooms WHERE id = $1 AND user_id = $2', [room_id, userId]);
       if (roomCheck.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy phòng thuộc quyền quản lý của bạn' });
       }
@@ -151,6 +211,32 @@ exports.createContract = async (req, res) => {
       const tenantCheck = await db.query('SELECT id FROM tenants WHERE id = $1 AND user_id = $2', [tenant_id, userId]);
       if (tenantCheck.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy khách thuê thuộc quyền quản lý của bạn' });
+      }
+
+      // Check for existing ACTIVE contract on this room
+      const activeContractRes = await db.query(`
+        SELECT c.id, c.start_date, c.end_date, t.full_name as tenant_name, t.phone as tenant_phone
+        FROM contracts c
+        JOIN tenants t ON c.tenant_id = t.id
+        WHERE c.room_id = $1 AND c.status = 'ACTIVE' AND c.user_id = $2
+      `, [room_id, userId]);
+
+      if (activeContractRes.rows.length > 0) {
+        const existing = activeContractRes.rows[0];
+        if (!force_terminate_existing) {
+          return res.status(409).json({
+            success: false,
+            has_active_contract: true,
+            message: `Phòng ${roomCheck.rows[0].room_code} đang có hợp đồng hiệu lực của khách ${existing.tenant_name}.`,
+            active_contract: existing
+          });
+        }
+
+        // Tự động kết thúc hợp đồng cũ sang 'ENDED'
+        await db.query(
+          `UPDATE contracts SET status = 'ENDED' WHERE room_id = $1 AND status = 'ACTIVE' AND user_id = $2`,
+          [room_id, userId]
+        );
       }
 
       const insert = await db.query(
@@ -178,6 +264,26 @@ exports.createContract = async (req, res) => {
       const room = db.memoryStore.rooms.find(r => r.id === parseInt(room_id, 10) && (r.user_id || 1) === userId);
       if (!room) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy phòng thuộc quyền quản lý của bạn' });
+      }
+
+      // Check active contract in memory
+      const existing = db.memoryStore.contracts.find(c => c.room_id === parseInt(room_id, 10) && c.status === 'ACTIVE' && (c.user_id || 1) === userId);
+      if (existing) {
+        const tenant = db.memoryStore.tenants.find(t => t.id === existing.tenant_id) || {};
+        if (!force_terminate_existing) {
+          return res.status(409).json({
+            success: false,
+            has_active_contract: true,
+            message: `Phòng ${room.room_code} đang có hợp đồng hiệu lực của khách ${tenant.full_name || 'N/A'}.`,
+            active_contract: {
+              id: existing.id,
+              tenant_name: tenant.full_name,
+              phone: tenant.phone,
+              end_date: existing.end_date
+            }
+          });
+        }
+        existing.status = 'ENDED';
       }
 
       const newId = db.memoryStore.contracts.length > 0 ? Math.max(...db.memoryStore.contracts.map(c => c.id)) + 1 : 1;
@@ -352,3 +458,61 @@ exports.removeRoommate = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Lỗi xóa người ở cùng', error: error.message });
   }
 };
+
+exports.extendContract = async (req, res) => {
+  try {
+    const userId = req.user?.id || 1;
+    const id = parseInt(req.params.id, 10);
+    const { new_end_date, end_date, rent_price } = req.body;
+    const targetEndDate = new_end_date || end_date;
+
+    if (!targetEndDate) {
+      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp ngày kết thúc mới' });
+    }
+
+    if (db.isConnected) {
+      const cCheck = await db.query('SELECT * FROM contracts WHERE id = $1 AND user_id = $2', [id, userId]);
+      if (cCheck.rows.length === 0) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy hợp đồng' });
+      }
+      const oldContract = cCheck.rows[0];
+      if (new Date(targetEndDate) <= new Date(oldContract.start_date)) {
+        return res.status(400).json({ success: false, message: 'Ngày gia hạn phải sau ngày bắt đầu hợp đồng' });
+      }
+
+      const update = await db.query(
+        `UPDATE contracts 
+         SET end_date = $1,
+             rent_price = COALESCE($2, rent_price),
+             status = 'ACTIVE'
+         WHERE id = $3 AND user_id = $4 RETURNING *`,
+        [targetEndDate, rent_price || null, id, userId]
+      );
+
+      // Đảm bảo trạng thái phòng là OCCUPIED
+      await db.query(`UPDATE rooms SET status = 'OCCUPIED' WHERE id = $1 AND user_id = $2`, [oldContract.room_id, userId]);
+
+      return res.json({ success: true, message: 'Gia hạn hợp đồng thành công', data: update.rows[0] });
+    } else {
+      const contract = db.memoryStore.contracts.find(c => c.id === id && (c.user_id || 1) === userId);
+      if (!contract) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy hợp đồng' });
+      }
+      if (new Date(targetEndDate) <= new Date(contract.start_date)) {
+        return res.status(400).json({ success: false, message: 'Ngày gia hạn phải sau ngày bắt đầu hợp đồng' });
+      }
+
+      contract.end_date = targetEndDate;
+      if (rent_price !== undefined && rent_price !== null) contract.rent_price = Number(rent_price);
+      contract.status = 'ACTIVE';
+
+      const room = db.memoryStore.rooms.find(r => r.id === contract.room_id && (r.user_id || 1) === userId);
+      if (room) room.status = 'OCCUPIED';
+
+      return res.json({ success: true, message: 'Gia hạn hợp đồng thành công', data: contract });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Lỗi gia hạn hợp đồng', error: error.message });
+  }
+};
+

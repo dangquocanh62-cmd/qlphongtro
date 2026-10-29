@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="6dp">
+
+    <CheckBox
+        android:id="@+id/cbServiceSelected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="4dp">
+
+        <TextView
+            android:id="@+id/tvServiceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Internet cáp quang"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvServiceUnitPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="100.000 đ / phòng"
+            android:textColor="@color/text_muted"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SL:"
+            android:textColor="@color/text_muted"
+            android:textSize="12sp"
+            android:layout_marginEnd="4dp" />
+
+        <EditText
+            android:id="@+id/etServiceQty"
+            android:layout_width="48dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_card_rounded"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:text="1"
+            android:textSize="12sp"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/tvServiceAmount"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            tools:text="100.000 đ"
+            android:textColor="@color/primary"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+</LinearLayout>

@@ -89,6 +89,8 @@ public class RoomDetailActivity extends AppCompatActivity {
         binding.btnCreateContract.setOnClickListener(v -> {
             Intent intent = new Intent(this, AddEditContractActivity.class);
             intent.putExtra("selected_room_id", room.getId());
+            intent.putExtra("selected_room_code", room.getRoomCode());
+            intent.putExtra("room", room);
             startActivity(intent);
         });
 

@@ -40,7 +40,47 @@ public class DashboardStats implements Serializable {
     @SerializedName("unpaid_debt")
     private long unpaidDebt;
 
+    @SerializedName("expiring_contracts_count")
+    private int expiringContractsCount;
+
+    @SerializedName("overdue_invoices_count")
+    private int overdueInvoicesCount;
+
+    @SerializedName("missing_meter_rooms_count")
+    private int missingMeterRoomsCount;
+
+    @SerializedName("month")
+    private int month;
+
+    @SerializedName("year")
+    private int year;
+
     public DashboardStats() {}
+
+    public int getMonth() { 
+        if (month <= 0 || month > 12) {
+            return java.util.Calendar.getInstance().get(java.util.Calendar.MONTH) + 1;
+        }
+        return month; 
+    }
+    public void setMonth(int month) { this.month = month; }
+
+    public int getYear() { 
+        if (year <= 1900) {
+            return java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+        }
+        return year; 
+    }
+    public void setYear(int year) { this.year = year; }
+
+    public int getOverdueInvoicesCount() { return overdueInvoicesCount; }
+    public void setOverdueInvoicesCount(int overdueInvoicesCount) { this.overdueInvoicesCount = overdueInvoicesCount; }
+
+    public int getMissingMeterRoomsCount() { return missingMeterRoomsCount; }
+    public void setMissingMeterRoomsCount(int missingMeterRoomsCount) { this.missingMeterRoomsCount = missingMeterRoomsCount; }
+
+    public int getExpiringContractsCount() { return expiringContractsCount; }
+    public void setExpiringContractsCount(int expiringContractsCount) { this.expiringContractsCount = expiringContractsCount; }
 
     public int getTotalRooms() { return totalRooms; }
     public void setTotalRooms(int totalRooms) { this.totalRooms = totalRooms; }

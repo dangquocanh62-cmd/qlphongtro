@@ -113,4 +113,33 @@ public class Contract implements Serializable {
     public boolean isActive() {
         return "ACTIVE".equalsIgnoreCase(status);
     }
+
+    @SerializedName("days_left")
+    private Integer daysLeft;
+
+    @SerializedName("is_expiring")
+    private Boolean isExpiring;
+
+    public Integer getDaysLeft() { return daysLeft; }
+    public void setDaysLeft(Integer daysLeft) { this.daysLeft = daysLeft; }
+
+    public Boolean getIsExpiring() { return isExpiring; }
+    public void setIsExpiring(Boolean isExpiring) { this.isExpiring = isExpiring; }
+
+    public int calculateDaysRemaining() {
+        if (daysLeft != null) return daysLeft;
+        return com.nhatro.app.utils.DateUtils.getDaysRemaining(endDate);
+    }
+
+    public boolean isExpiringSoon() {
+        if (!isActive() || endDate == null || endDate.trim().isEmpty()) return false;
+        if (isExpiring != null && isExpiring) return true;
+        int remaining = calculateDaysRemaining();
+        return remaining >= 0 && remaining <= 30;
+    }
+
+    public boolean isExpired() {
+        if (!isActive() || endDate == null || endDate.trim().isEmpty()) return false;
+        return calculateDaysRemaining() < 0;
+    }
 }

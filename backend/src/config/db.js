@@ -17,7 +17,7 @@ const pgConfig = process.env.DATABASE_URL
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-      connectionTimeoutMillis: 3000
+      connectionTimeoutMillis: 10000
     };
 
 // In-memory data store for standalone/mock mode when PostgreSQL is offline
@@ -66,7 +66,7 @@ const memoryStore = {
   ],
   invoices: [
     { id: 1, user_id: 1, contract_id: 1, month: 10, year: 2024, total_amount: 3742500, status: 'PARTIAL', due_date: '2024-11-05', created_at: new Date().toISOString() },
-    { id: 2, user_id: 1, contract_id: 2, month: 10, year: 2024, total_amount: 4195000, status: 'UNPAID', due_date: '2024-11-05', created_at: new Date().toISOString() }
+    { id: 2, user_id: 1, contract_id: 2, month: 10, year: 2024, total_amount: 4425000, status: 'UNPAID', due_date: '2024-11-05', created_at: new Date().toISOString() }
   ],
   invoice_items: [
     { id: 1, invoice_id: 1, description: 'Tiền thuê phòng tháng 10/2024', quantity: 1, unit_price: 3000000, amount: 3000000 },
@@ -76,7 +76,10 @@ const memoryStore = {
     { id: 5, invoice_id: 1, description: 'Rác & Vệ sinh môi trường', quantity: 1, unit_price: 50000, amount: 50000 },
     { id: 6, invoice_id: 2, description: 'Tiền thuê phòng tháng 10/2024', quantity: 1, unit_price: 3500000, amount: 3500000 },
     { id: 7, invoice_id: 2, description: 'Tiền điện (Chỉ số: 300 -> 420: 120 kWh)', quantity: 120, unit_price: 3500, amount: 420000 },
-    { id: 8, invoice_id: 2, description: 'Tiền nước (Chỉ số: 60 -> 71: 11 m³)', quantity: 11, unit_price: 25000, amount: 275000 }
+    { id: 8, invoice_id: 2, description: 'Tiền nước (Chỉ số: 60 -> 71: 11 m³)', quantity: 11, unit_price: 25000, amount: 275000 },
+    { id: 9, invoice_id: 2, description: 'Internet cáp quang', quantity: 1, unit_price: 100000, amount: 100000 },
+    { id: 10, invoice_id: 2, description: 'Rác & Vệ sinh chung', quantity: 1, unit_price: 50000, amount: 50000 },
+    { id: 11, invoice_id: 2, description: 'Gửi xe máy', quantity: 1, unit_price: 80000, amount: 80000 }
   ],
   payments: [
     { id: 1, invoice_id: 1, amount: 2000000, method: 'TRANSFER', paid_at: '2024-10-31T09:30:00.000Z' }
@@ -117,41 +120,43 @@ async function autoMigrate(client) {
 }
 
 async function initDb() {
-  try {
-    pool = new Pool(pgConfig);
-    const client = await pool.connect();
-    const res = await client.query('SELECT NOW()');
-    await autoMigrate(client);
-    client.release();
-    isPgConnected = true;
-    console.log('[Database] Kết nối PostgreSQL THÀNH CÔNG tại:', res.rows[0].now);
-  } catch (err) {
-    if (!process.env.DATABASE_URL) {
-      // Tự động thử kích hoạt dịch vụ PostgreSQL trong WSL nếu đang tắt trên máy local
-      try {
-        const { execSync } = require('child_process');
-        execSync('wsl -d Ubuntu -u root service postgresql start', { stdio: 'ignore', timeout: 5000 });
-        pool = new Pool(pgConfig);
-        const retryClient = await pool.connect();
-        const res = await retryClient.query('SELECT NOW()');
-        await autoMigrate(retryClient);
-        retryClient.release();
-        isPgConnected = true;
-        console.log('[Database] Đã tự động kích hoạt PostgreSQL trên WSL và kết nối THÀNH CÔNG tại:', res.rows[0].now);
-        return;
-      } catch (_) {
-        // Nếu không bật được thì chuyển sang In-Memory mode
+  if (!process.env.DATABASE_URL) {
+    try {
+      const { spawn, execSync } = require('child_process');
+      const keepalive = spawn('wsl', ['-d', 'Ubuntu', 'sleep', 'infinity'], { detached: true, stdio: 'ignore' });
+      keepalive.unref();
+      execSync('wsl -d Ubuntu -u root service postgresql start', { stdio: 'ignore', timeout: 5000 });
+    } catch (_) {}
+  }
+
+  pool = new Pool(pgConfig);
+
+  let lastErr = null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const client = await pool.connect();
+      const res = await client.query('SELECT NOW()');
+      await autoMigrate(client);
+      client.release();
+      isPgConnected = true;
+      console.log('[Database] Kết nối PostgreSQL THÀNH CÔNG tại:', res.rows[0].now);
+      return;
+    } catch (err) {
+      lastErr = err;
+      if (attempt < 3) {
+        await new Promise(r => setTimeout(r, 1500));
       }
     }
-
-    isPgConnected = false;
-    const errorDetails = (err.errors && err.errors.length)
-      ? err.errors.map(e => e.message || e.code).join(', ')
-      : (err.message || err.code || 'ECONNREFUSED');
-    console.warn(`[Database] Không thể kết nối trực tiếp đến PostgreSQL (${errorDetails}).`);
-    console.log('[Database] Chuyển sang chế độ In-Memory Database đã nạp sẵn Seed Data đầy đủ 10 bảng!');
   }
+
+  isPgConnected = false;
+  const errorDetails = (lastErr && lastErr.errors && lastErr.errors.length)
+    ? lastErr.errors.map(e => e.message || e.code).join(', ')
+    : (lastErr ? (lastErr.message || lastErr.code) : 'ECONNREFUSED');
+  console.warn(`[Database] Không thể kết nối trực tiếp đến PostgreSQL (${errorDetails}).`);
+  console.log('[Database] Chuyển sang chế độ In-Memory Database đã nạp sẵn Seed Data đầy đủ 10 bảng!');
 }
+
 
 async function query(text, params) {
   if (isPgConnected && pool) {

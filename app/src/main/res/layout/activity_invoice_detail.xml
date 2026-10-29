@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -36,8 +37,8 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/divider"
                 app:cardBackgroundColor="@color/surface">
@@ -56,9 +57,9 @@
                             android:id="@+id/tvInvoiceRoom"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Phòng P101"
+                            tools:text="Phòng P101"
                             android:textColor="@color/primary_dark"
-                            android:textSize="22sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -77,9 +78,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="Kỳ thanh toán: Tháng 10/2024"
+                        tools:text="Kỳ thanh toán: Tháng 10/2024"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -87,16 +88,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Khách thuê: Lê Hoàng Long (0987654321)"
+                        tools:text="Khách thuê: Lê Hoàng Long (0987654321)"
                         android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/tvInvoiceDueDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Hạn nộp tiền: 05/11/2024"
+                        tools:text="Hạn nộp tiền: 05/11/2024"
                         android:textColor="@color/text_muted"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -107,8 +108,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/divider"
                 app:cardBackgroundColor="@color/surface">
@@ -119,13 +120,30 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bảng kê chi tiết các khoản phí"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Bảng kê chi tiết các khoản phí"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddInvoiceItem"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="+ Thêm dịch vụ"
+                            android:textColor="@color/primary"
+                            android:textSize="12sp"
+                            android:paddingHorizontal="6dp" />
+                    </RelativeLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvInvoiceItems"
@@ -144,7 +162,7 @@
                             android:layout_height="wrap_content"
                             android:text="TỔNG TIỀN PHẢI TRẢ:"
                             android:textColor="@color/text_primary"
-                            android:textSize="15sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -152,9 +170,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:text="3.742.500 đ"
+                            tools:text="3.742.500 đ"
                             android:textColor="@color/primary"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
 
@@ -175,9 +193,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:text="2.000.000 đ"
+                            tools:text="2.000.000 đ"
                             android:textColor="@color/status_paid_text"
-                            android:textSize="15sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
 
@@ -191,7 +209,7 @@
                             android:layout_height="wrap_content"
                             android:text="CÒN PHẢI NỘP (NỢ):"
                             android:textColor="@color/status_unpaid_text"
-                            android:textSize="15sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -199,9 +217,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:text="1.742.500 đ"
+                            tools:text="1.742.500 đ"
                             android:textColor="@color/status_unpaid_text"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
 
@@ -213,8 +231,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/divider"
                 app:cardBackgroundColor="@color/surface">
@@ -247,8 +265,184 @@
                         android:layout_marginTop="6dp"
                         android:text="Chưa có lần thanh toán nào"
                         android:textColor="@color/text_muted"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:visibility="gone" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- VietQR Payment Quick Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardVietQr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/divider"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thanh toán qua VietQR"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvVietQrBadge"
+                            style="@style/BadgeStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_badge_available"
+                            android:text="NAPAS 247"
+                            android:textColor="@color/status_available_text" />
+                    </RelativeLayout>
+
+                    <!-- When bank is configured: QR Code display -->
+                    <LinearLayout
+                        android:id="@+id/layoutQrDisplay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal">
+
+                        <FrameLayout
+                            android:layout_width="180dp"
+                            android:layout_height="180dp"
+                            android:background="@drawable/bg_card_rounded"
+                            android:padding="8dp">
+
+                            <ImageView
+                                android:id="@+id/ivVietQrCode"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="fitCenter"
+                                android:contentDescription="Mã VietQR" />
+
+                            <ProgressBar
+                                android:id="@+id/pbQrLoading"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_gravity="center"
+                                android:visibility="visible" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Chạm vào mã QR để phóng to"
+                            android:textColor="@color/text_muted"
+                            android:textSize="12sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="12dp"
+                            android:background="@color/divider" />
+
+                        <TextView
+                            android:id="@+id/tvQrBankInfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="Ngân hàng: MB Bank - 0987654321"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvQrAccountOwner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            tools:text="Chủ tài khoản: NGUYEN VAN A"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvQrTransferContent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            tools:text="Nội dung CK: P101 tien nha T10"
+                            android:textColor="@color/primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnCopyAccountNo"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="44dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="6dp"
+                                android:text="Sao chép STK"
+                                android:textColor="@color/primary"
+                                android:textSize="12sp"
+                                app:cornerRadius="@dimen/radius_button" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnCopyContent"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="44dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="6dp"
+                                android:text="Sao chép nội dung"
+                                android:textColor="@color/primary"
+                                android:textSize="12sp"
+                                app:cornerRadius="@dimen/radius_button" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- When bank is NOT configured -->
+                    <LinearLayout
+                        android:id="@+id/layoutNoBankConfig"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Bạn chưa cài đặt thông tin số tài khoản ngân hàng để hiển thị mã VietQR thanh toán."
+                            android:textColor="@color/text_muted"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSetupBankInfo"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_marginTop="10dp"
+                            android:text="Cài đặt tài khoản ngân hàng"
+                            android:textSize="12sp"
+                            app:cornerRadius="@dimen/radius_button" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -260,13 +454,13 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/primary"
-                android:text="📤 Gửi Hóa Đơn Cho Khách (Zalo / SMS)"
+                android:text="Gửi hóa đơn cho khách (Zalo / SMS)"
                 android:textColor="@color/text_white"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 app:icon="@drawable/ic_share"
                 app:iconTint="@color/text_white"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/radius_button" />
 
             <!-- Print / PDF Button -->
             <com.google.android.material.button.MaterialButton
@@ -275,7 +469,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
-                android:text="📄 In / Lưu Phiếu Thu Dạng PDF"
+                android:text="In / lưu phiếu thu dạng PDF"
                 android:textColor="@color/primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -283,7 +477,7 @@
                 app:iconTint="@color/primary"
                 app:strokeColor="@color/primary"
                 app:strokeWidth="1.5dp"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/radius_button" />
 
             <!-- Add Payment Button -->
             <com.google.android.material.button.MaterialButton
@@ -292,10 +486,10 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="10dp"
                 android:backgroundTint="@color/status_paid_text"
-                android:text="💰 Ghi Nhận Thanh Toán"
-                android:textSize="15sp"
+                android:text="Ghi nhận thanh toán"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/radius_button" />
 
         </LinearLayout>
     </ScrollView>

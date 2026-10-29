@@ -11,13 +11,145 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Filter Chips -->
+        <!-- 1. Bộ chuyển đổi chế độ xem: Sơ đồ tầng <-> Danh sách -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/divider"
+            app:cardBackgroundColor="@color/surface">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleViewMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnModeFloorPlan"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:text="Sơ đồ tầng"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_dashboard"
+                    app:iconSize="16dp"
+                    app:strokeWidth="0dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnModeList"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:text="Danh sách"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_rooms"
+                    app:iconSize="16dp"
+                    app:strokeWidth="0dp" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 2. Thanh Chú thích màu sắc (Status Legend Bar) -->
+        <LinearLayout
+            android:id="@+id/layoutLegendBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="4dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_status_dot"
+                    android:backgroundTint="#3B82F6" />
+
+                <TextView
+                    android:id="@+id/tvLegendOccupied"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Đang thuê (0)"
+                    android:textColor="#1D4ED8"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_status_dot"
+                    android:backgroundTint="#22C55E" />
+
+                <TextView
+                    android:id="@+id/tvLegendAvailable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Còn trống (0)"
+                    android:textColor="#15803D"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_status_dot"
+                    android:backgroundTint="#F59E0B" />
+
+                <TextView
+                    android:id="@+id/tvLegendMaintenance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Bảo trì (0)"
+                    android:textColor="#B45309"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 3. Filter Chips -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="none"
             android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp">
+            android:paddingVertical="4dp">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupStatus"
@@ -31,32 +163,33 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="Tất cả" />
+                    android:text="@string/filter_all" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipAvailable"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Còn trống" />
+                    android:text="@string/status_available" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipOccupied"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Đang thuê" />
+                    android:text="@string/status_occupied" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipMaintenance"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bảo trì" />
+                    android:text="@string/status_maintenance" />
 
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
+        <!-- 4. Content Area -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
@@ -66,20 +199,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <!-- RecyclerView Sơ đồ phòng theo tầng -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvFloorPlan"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="80dp" />
+
+                <!-- RecyclerView Danh sách phòng chi tiết -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvRooms"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
-                    android:paddingBottom="80dp" />
+                    android:paddingTop="4dp"
+                    android:paddingBottom="80dp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tvEmpty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:gravity="center"
+                    android:drawableTop="@drawable/ic_empty_state"
+                    android:drawablePadding="12dp"
                     android:text="Không có phòng nào phù hợp"
                     android:textColor="@color/text_muted"
+                    android:textSize="14sp"
                     android:visibility="gone" />
 
             </FrameLayout>

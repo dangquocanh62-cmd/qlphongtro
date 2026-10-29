@@ -5,7 +5,8 @@
     <color name="primary_dark">#1E3A8A</color>
     <color name="primary_light">#3B82F6</color>
     <color name="primary_gradient_start">#1E3A8A</color>
-    <color name="primary_gradient_end">#3B82F6</color>
+    <color name="primary_gradient_end">#2563EB</color>
+    <color name="text_on_gradient_muted">#BFDBFE</color>
     <color name="primary_container">#EFF6FF</color>
     <color name="on_primary_container">#1E40AF</color>
 
@@ -24,7 +25,7 @@
     <!-- Text Colors -->
     <color name="text_primary">#0F172A</color>
     <color name="text_secondary">#475569</color>
-    <color name="text_muted">#94A3B8</color>
+    <color name="text_muted">#64748B</color>
     <color name="text_white">#FFFFFF</color>
 
     <!-- Status Colors: Room & Invoices (Curated pastel backgrounds & strong foregrounds) -->

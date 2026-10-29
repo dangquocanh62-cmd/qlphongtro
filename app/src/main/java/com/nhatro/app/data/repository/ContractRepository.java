@@ -22,10 +22,14 @@ public class ContractRepository {
     }
 
     public LiveData<Resource<List<Contract>>> getContracts(String status, Long roomId, Long tenantId) {
+        return getContracts(status, roomId, tenantId, null);
+    }
+
+    public LiveData<Resource<List<Contract>>> getContracts(String status, Long roomId, Long tenantId, Boolean expiring) {
         MutableLiveData<Resource<List<Contract>>> result = new MutableLiveData<>();
         result.setValue(Resource.loading());
 
-        apiService.getContracts(status, roomId, tenantId).enqueue(new Callback<ApiResponse<List<Contract>>>() {
+        apiService.getContracts(status, roomId, tenantId, expiring).enqueue(new Callback<ApiResponse<List<Contract>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<Contract>>> call, Response<ApiResponse<List<Contract>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
@@ -68,6 +72,10 @@ public class ContractRepository {
     }
 
     public LiveData<Resource<Contract>> createContract(Long roomId, Long tenantId, String startDate, String endDate, Long deposit, Long rentPrice, List<Long> roommateIds) {
+        return createContract(roomId, tenantId, startDate, endDate, deposit, rentPrice, roommateIds, false);
+    }
+
+    public LiveData<Resource<Contract>> createContract(Long roomId, Long tenantId, String startDate, String endDate, Long deposit, Long rentPrice, List<Long> roommateIds, boolean forceTerminateExisting) {
         MutableLiveData<Resource<Contract>> result = new MutableLiveData<>();
         result.setValue(Resource.loading());
 
@@ -78,6 +86,7 @@ public class ContractRepository {
         body.put("end_date", endDate);
         body.put("deposit", deposit);
         body.put("rent_price", rentPrice);
+        body.put("force_terminate_existing", forceTerminateExisting);
         if (roommateIds != null) {
             body.put("roommate_ids", roommateIds);
         }
@@ -88,7 +97,19 @@ public class ContractRepository {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     result.setValue(Resource.success(response.body().getData()));
                 } else {
-                    result.setValue(Resource.error(response.body() != null ? response.body().getMessage() : "Lỗi lập hợp đồng"));
+                    String msg = "Lỗi lập hợp đồng";
+                    if (response.body() != null && response.body().getMessage() != null) {
+                        msg = response.body().getMessage();
+                    } else if (response.errorBody() != null) {
+                        try {
+                            String errStr = response.errorBody().string();
+                            org.json.JSONObject obj = new org.json.JSONObject(errStr);
+                            if (obj.has("message")) {
+                                msg = obj.getString("message");
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                    result.setValue(Resource.error(msg));
                 }
             }
 
@@ -143,6 +164,35 @@ public class ContractRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage()));
+            }
+        });
+
+        return result;
+    }
+
+    public LiveData<Resource<Contract>> extendContract(Long id, String newEndDate, Long rentPrice) {
+        MutableLiveData<Resource<Contract>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading());
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("new_end_date", newEndDate);
+        if (rentPrice != null) {
+            body.put("rent_price", rentPrice);
+        }
+
+        apiService.extendContract(id, body).enqueue(new Callback<ApiResponse<Contract>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Contract>> call, Response<ApiResponse<Contract>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    result.setValue(Resource.success(response.body().getData()));
+                } else {
+                    result.setValue(Resource.error(response.body() != null ? response.body().getMessage() : "Lỗi gia hạn hợp đồng"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Contract>> call, Throwable t) {
                 result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage()));
             }
         });

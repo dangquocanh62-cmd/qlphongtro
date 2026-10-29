@@ -18,9 +18,12 @@ public interface ApiService {
     @GET("auth/profile")
     Call<ApiResponse<User>> getProfile();
 
-    // 2. Dashboard Stats
+    // 2. Dashboard Stats & Reports
     @GET("dashboard/stats")
-    Call<ApiResponse<DashboardStats>> getDashboardStats();
+    Call<ApiResponse<DashboardStats>> getDashboardStats(@Query("month") Integer month, @Query("year") Integer year);
+
+    @GET("reports/revenue")
+    Call<ApiResponse<List<MonthlyRevenue>>> getMonthlyRevenue(@Query("months") int months);
 
     // 3. Rooms
     @GET("rooms")
@@ -59,7 +62,8 @@ public interface ApiService {
     Call<ApiResponse<List<Contract>>> getContracts(
             @Query("status") String status,
             @Query("roomId") Long roomId,
-            @Query("tenantId") Long tenantId
+            @Query("tenantId") Long tenantId,
+            @Query("expiring") Boolean expiring
     );
 
     @GET("contracts/{id}")
@@ -73,6 +77,9 @@ public interface ApiService {
 
     @PUT("contracts/{id}/end")
     Call<ApiResponse<Contract>> endContract(@Path("id") Long id);
+
+    @PUT("contracts/{id}/extend")
+    Call<ApiResponse<Contract>> extendContract(@Path("id") Long id, @Body Map<String, Object> body);
 
     @POST("contracts/{id}/roommates")
     Call<ApiResponse<Void>> addRoommate(@Path("id") Long id, @Body Map<String, Object> body);
@@ -134,6 +141,15 @@ public interface ApiService {
 
     @POST("invoices/generate-monthly")
     Call<ApiResponse<Invoice>> generateMonthlyInvoice(@Body Map<String, Object> body);
+
+    @POST("invoices/bulk-generate")
+    Call<ApiResponse<Map<String, Object>>> bulkGenerateInvoices(@Body Map<String, Object> body);
+
+    @POST("invoices/{id}/items")
+    Call<ApiResponse<InvoiceItem>> addInvoiceItem(@Path("id") Long invoiceId, @Body Map<String, Object> body);
+
+    @DELETE("invoices/{id}/items/{itemId}")
+    Call<ApiResponse<Void>> removeInvoiceItem(@Path("id") Long invoiceId, @Path("itemId") Long itemId);
 
     @DELETE("invoices/{id}")
     Call<ApiResponse<Void>> deleteInvoice(@Path("id") Long id);

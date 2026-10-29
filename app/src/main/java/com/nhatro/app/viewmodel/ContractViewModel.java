@@ -13,14 +13,24 @@ import java.util.List;
 
 public class ContractViewModel extends AndroidViewModel {
     private final ContractRepository repository;
-    private final MutableLiveData<String> statusFilter = new MutableLiveData<>("ACTIVE");
+
+    public static class FilterParams {
+        String status;
+        Boolean expiring;
+        public FilterParams(String status, Boolean expiring) {
+            this.status = status;
+            this.expiring = expiring;
+        }
+    }
+
+    private final MutableLiveData<FilterParams> filterParams = new MutableLiveData<>(new FilterParams("ACTIVE", null));
     private final LiveData<Resource<List<Contract>>> contracts;
 
     public ContractViewModel(@NonNull Application application) {
         super(application);
         this.repository = new ContractRepository(application);
-        this.contracts = Transformations.switchMap(statusFilter, status ->
-                repository.getContracts(status, null, null)
+        this.contracts = Transformations.switchMap(filterParams, params ->
+                repository.getContracts(params.status, null, null, params.expiring)
         );
     }
 
@@ -29,11 +39,16 @@ public class ContractViewModel extends AndroidViewModel {
     }
 
     public void filterByStatus(String status) {
-        statusFilter.setValue(status);
+        filterParams.setValue(new FilterParams(status, null));
+    }
+
+    public void filterExpiring() {
+        filterParams.setValue(new FilterParams("ACTIVE", true));
     }
 
     public void refresh() {
-        statusFilter.setValue(statusFilter.getValue());
+        FilterParams current = filterParams.getValue();
+        filterParams.setValue(current != null ? current : new FilterParams("ACTIVE", null));
     }
 
     public LiveData<Resource<Contract>> getContractById(Long id) {
@@ -41,11 +56,19 @@ public class ContractViewModel extends AndroidViewModel {
     }
 
     public LiveData<Resource<Contract>> createContract(Long roomId, Long tenantId, String startDate, String endDate, Long deposit, Long rentPrice, List<Long> roommateIds) {
-        return repository.createContract(roomId, tenantId, startDate, endDate, deposit, rentPrice, roommateIds);
+        return repository.createContract(roomId, tenantId, startDate, endDate, deposit, rentPrice, roommateIds, false);
+    }
+
+    public LiveData<Resource<Contract>> createContract(Long roomId, Long tenantId, String startDate, String endDate, Long deposit, Long rentPrice, List<Long> roommateIds, boolean forceTerminateExisting) {
+        return repository.createContract(roomId, tenantId, startDate, endDate, deposit, rentPrice, roommateIds, forceTerminateExisting);
     }
 
     public LiveData<Resource<Contract>> endContract(Long id) {
         return repository.endContract(id);
+    }
+
+    public LiveData<Resource<Contract>> extendContract(Long id, String newEndDate, Long rentPrice) {
+        return repository.extendContract(id, newEndDate, rentPrice);
     }
 
     public LiveData<Resource<Void>> addRoommate(Long contractId, Long tenantId) {

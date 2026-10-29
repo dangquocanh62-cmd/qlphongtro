@@ -1,6 +1,7 @@
 package com.nhatro.app.ui.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +13,21 @@ import java.util.List;
 
 public class InvoiceItemAdapter extends RecyclerView.Adapter<InvoiceItemAdapter.ItemViewHolder> {
     private List<InvoiceItem> items = new ArrayList<>();
+    private boolean canDelete = true;
+    private OnItemDeleteListener deleteListener;
+
+    public interface OnItemDeleteListener {
+        void onItemDelete(InvoiceItem item);
+    }
+
+    public void setCanDelete(boolean canDelete) {
+        this.canDelete = canDelete;
+        notifyDataSetChanged();
+    }
+
+    public void setOnItemDeleteListener(OnItemDeleteListener listener) {
+        this.deleteListener = listener;
+    }
 
     public void setItems(List<InvoiceItem> items) {
         this.items = items != null ? items : new ArrayList<>();
@@ -35,7 +51,7 @@ public class InvoiceItemAdapter extends RecyclerView.Adapter<InvoiceItemAdapter.
         return items.size();
     }
 
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
+    class ItemViewHolder extends RecyclerView.ViewHolder {
         private final ItemInvoiceItemBinding binding;
 
         public ItemViewHolder(ItemInvoiceItemBinding binding) {
@@ -47,6 +63,17 @@ public class InvoiceItemAdapter extends RecyclerView.Adapter<InvoiceItemAdapter.
             binding.tvItemDescription.setText(item.getDescription());
             binding.tvItemAmount.setText(CurrencyUtils.formatVND(item.getAmount()));
             binding.tvItemCalculation.setText(String.format("%.1f x %s", item.getQuantity(), CurrencyUtils.formatVND(item.getUnitPrice())));
+
+            if (canDelete && item.getId() != null) {
+                binding.btnDeleteItem.setVisibility(View.VISIBLE);
+                binding.btnDeleteItem.setOnClickListener(v -> {
+                    if (deleteListener != null) {
+                        deleteListener.onItemDelete(item);
+                    }
+                });
+            } else {
+                binding.btnDeleteItem.setVisibility(View.GONE);
+            }
         }
     }
 }

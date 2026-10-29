@@ -12,16 +12,18 @@
         android:orientation="vertical">
 
         <!-- Status Filter Chips -->
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
+            android:scrollbars="none"
+            android:paddingHorizontal="12dp"
             android:paddingVertical="8dp">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupContractStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:singleLine="true"
                 app:singleSelection="true">
 
                 <com.google.android.material.chip.Chip
@@ -30,24 +32,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="Đang hiệu lực" />
+                    android:text="@string/contract_active" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipExpiringContracts"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/contract_expiring" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipEndedContracts"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Đã kết thúc" />
+                    android:text="@string/contract_ended" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipAllContracts"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tất cả" />
+                    android:text="@string/filter_all" />
 
             </com.google.android.material.chip.ChipGroup>
-        </LinearLayout>
+        </HorizontalScrollView>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
@@ -70,8 +79,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:gravity="center"
+                    android:drawableTop="@drawable/ic_empty_state"
+                    android:drawablePadding="12dp"
                     android:text="Không có hợp đồng nào"
                     android:textColor="@color/text_muted"
+                    android:textSize="14sp"
                     android:visibility="gone" />
 
             </FrameLayout>

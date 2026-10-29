@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.nhatro.app.data.model.Tenant;
 import com.nhatro.app.databinding.ActivityAddEditTenantBinding;
+import com.nhatro.app.utils.DatePickerHelper;
 import com.nhatro.app.viewmodel.TenantViewModel;
 
 public class AddEditTenantActivity extends AppCompatActivity {
@@ -22,6 +23,8 @@ public class AddEditTenantActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(TenantViewModel.class);
 
         binding.toolbar.setNavigationOnClickListener(v -> finish());
+
+        DatePickerHelper.attachDatePicker(getSupportFragmentManager(), binding.etBirthDate, binding.tilBirthDate, "Chọn ngày sinh");
 
         existingTenant = (Tenant) getIntent().getSerializableExtra("tenant");
         if (existingTenant != null) {

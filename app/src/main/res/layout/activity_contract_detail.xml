@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -35,8 +36,8 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/divider"
                 app:cardBackgroundColor="@color/surface">
@@ -55,9 +56,9 @@
                             android:id="@+id/tvDetailRoom"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Phòng P101"
+                            tools:text="Phòng P101"
                             android:textColor="@color/primary_dark"
-                            android:textSize="22sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -76,9 +77,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Đại diện: Lê Hoàng Long (0987654321)"
+                        tools:text="Đại diện: Lê Hoàng Long (0987654321)"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -86,9 +87,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="CCCD: 001200001234 • Quê: Hà Nội"
+                        tools:text="CCCD: 001200001234 • Quê: Hà Nội"
                         android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
 
                     <View
                         android:layout_width="match_parent"
@@ -100,7 +101,7 @@
                         android:id="@+id/tvDetailDates"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thời hạn: 01/01/2024 -> 01/01/2025"
+                        tools:text="Thời hạn: 01/01/2024 -> 01/01/2025"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp" />
 
@@ -109,7 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="Giá thuê theo HĐ: 3.000.000 đ / tháng"
+                        tools:text="Giá thuê theo HĐ: 3.000.000 đ / tháng"
                         android:textColor="@color/primary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -119,7 +120,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Tiền cọc: 3.000.000 đ"
+                        tools:text="Tiền cọc: 3.000.000 đ"
                         android:textColor="@color/secondary"
                         android:textSize="14sp" />
 
@@ -131,8 +132,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/divider"
                 app:cardBackgroundColor="@color/surface">
@@ -176,17 +177,63 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- End Contract Action -->
+            <!-- Expiry Warning Alert in Detail -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDetailExpiryAlert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
+                app:strokeWidth="1.5dp"
+                app:strokeColor="#F59E0B"
+                app:cardBackgroundColor="#FFFBEB"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvDetailExpiryText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hợp đồng này sắp hết hạn trong 15 ngày tới! Hãy liên hệ khách thuê để gia hạn hoặc thanh lý."
+                        android:textColor="#92400E"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Extend Contract Action -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEndContract"
+                android:id="@+id/btnExtendContract"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="24dp"
-                android:backgroundTint="@color/status_unpaid_text"
-                android:text="Thanh Lý / Kết Thúc Hợp Đồng"
-                android:textSize="15sp"
+                android:backgroundTint="@color/primary"
+                android:text="Gia Hạn Hợp Đồng"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/radius_button" />
+
+            <!-- End Contract Action -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEndContract"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:text="Thanh Lý / Kết Thúc Hợp Đồng"
+                android:textColor="@color/status_unpaid_text"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:strokeColor="@color/status_unpaid_text"
+                app:strokeWidth="1.5dp"
+                app:cornerRadius="@dimen/radius_button" />
 
         </LinearLayout>
     </ScrollView>

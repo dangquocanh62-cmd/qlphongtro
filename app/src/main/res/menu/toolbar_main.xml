@@ -2,18 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_services"
-        android:title="Dịch vụ"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_meters"
+        android:icon="@drawable/ic_electric"
         android:title="Ghi điện nước"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_config_server"
-        android:title="Đổi URL máy chủ"
+        android:id="@+id/action_services"
+        android:title="Danh mục dịch vụ"
         app:showAsAction="never" />
 
     <item

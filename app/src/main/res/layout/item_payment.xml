@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -14,19 +15,19 @@
             android:id="@+id/tvPaymentAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+ 2.000.000 đ"
             android:textColor="@color/status_paid_text"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="+ 2.000.000 đ" />
 
         <TextView
             android:id="@+id/tvPaymentMethod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="Chuyển khoản"
             android:textColor="@color/text_secondary"
-            android:textSize="13sp" />
+            android:textSize="12sp"
+            tools:text="Chuyển khoản" />
     </RelativeLayout>
 
     <TextView
@@ -34,9 +35,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:text="31/10/2024 09:30"
         android:textColor="@color/text_muted"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        tools:text="31/10/2024 09:30" />
 
     <View
         android:layout_width="match_parent"

@@ -2,12 +2,13 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="14dp"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardCornerRadius="@dimen/radius_card"
+    app:cardElevation="0dp"
     app:strokeWidth="1dp"
     app:strokeColor="@color/divider"
     app:cardBackgroundColor="@color/surface">
@@ -45,20 +46,41 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:text="Lê Hoàng Long"
+                    android:layout_toStartOf="@id/layoutPhoneCall"
                     android:textColor="@color/text_primary"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Lê Hoàng Long" />
 
-                <TextView
-                    android:id="@+id/tvPhone"
+                <LinearLayout
+                    android:id="@+id/layoutPhoneCall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="0987654321"
-                    android:textColor="@color/primary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="0987654321" />
+
+                    <ImageView
+                        android:id="@+id/btnCallTenant"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="4dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Gọi điện cho khách"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_phone"
+                        app:tint="@color/primary" />
+                </LinearLayout>
             </RelativeLayout>
 
             <TextView
@@ -66,18 +88,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="CCCD: 001200001234"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                tools:text="CCCD: 001200001234" />
 
             <TextView
                 android:id="@+id/tvHometown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Quê quán: Hà Nội • Sinh năm: 2000"
                 android:textColor="@color/text_muted"
-                android:textSize="11sp" />
+                android:textSize="12sp"
+                tools:text="Quê quán: Hà Nội • Sinh năm: 2000" />
         </LinearLayout>
 
     </LinearLayout>

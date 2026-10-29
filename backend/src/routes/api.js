@@ -17,8 +17,11 @@ router.post('/auth/login', authController.login);
 router.post('/auth/register', authController.register);
 router.get('/auth/profile', auth, authController.getProfile);
 
-// 2. Dashboard routes
+// 2. Dashboard & Reports routes
 router.get('/dashboard/stats', auth, dashboardController.getStats);
+router.get('/dashboard/summary', auth, dashboardController.getStats);
+router.get('/reports/revenue', auth, dashboardController.getMonthlyRevenue);
+router.get('/dashboard/revenue', auth, dashboardController.getMonthlyRevenue);
 
 // 3. Rooms routes
 router.get('/rooms', auth, roomController.getRooms);
@@ -40,6 +43,7 @@ router.get('/contracts/:id', auth, contractController.getContractById);
 router.post('/contracts', auth, contractController.createContract);
 router.put('/contracts/:id', auth, contractController.updateContract);
 router.put('/contracts/:id/end', auth, contractController.endContract);
+router.put('/contracts/:id/extend', auth, contractController.extendContract);
 router.post('/contracts/:id/roommates', auth, contractController.addRoommate);
 router.delete('/contracts/:id/roommates/:tenantId', auth, contractController.removeRoommate);
 
@@ -61,6 +65,9 @@ router.get('/invoices', auth, invoiceController.getInvoices);
 router.get('/invoices/:id', auth, invoiceController.getInvoiceById);
 router.post('/invoices', auth, invoiceController.createInvoice);
 router.post('/invoices/generate-monthly', auth, invoiceController.generateMonthlyInvoice);
+router.post('/invoices/bulk-generate', auth, invoiceController.bulkGenerateInvoices);
+router.post('/invoices/:id/items', auth, invoiceController.addInvoiceItem);
+router.delete('/invoices/:id/items/:itemId', auth, invoiceController.removeInvoiceItem);
 router.delete('/invoices/:id', auth, invoiceController.deleteInvoice);
 
 // 9. Payments routes

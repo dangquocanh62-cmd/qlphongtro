@@ -2,12 +2,13 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="14dp"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardCornerRadius="@dimen/radius_card"
+    app:cardElevation="0dp"
     app:strokeWidth="1dp"
     app:strokeColor="@color/divider"
     app:cardBackgroundColor="@color/surface">
@@ -44,10 +45,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:text="Điện sinh hoạt"
                     android:textColor="@color/text_primary"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Điện sinh hoạt" />
 
                 <TextView
                     android:id="@+id/tvMeteredBadge"
@@ -56,8 +57,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:background="@drawable/bg_badge_occupied"
-                    android:text="Theo công tơ"
-                    android:textColor="@color/status_occupied_text" />
+                    android:textColor="@color/status_occupied_text"
+                    tools:text="Theo công tơ" />
             </RelativeLayout>
 
             <TextView
@@ -65,10 +66,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="3.500 đ / kWh"
                 android:textColor="@color/primary"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="3.500 đ / kWh" />
         </LinearLayout>
 
     </LinearLayout>

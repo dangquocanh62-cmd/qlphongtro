@@ -11,6 +11,7 @@ import com.nhatro.app.data.model.Invoice;
 import com.nhatro.app.data.repository.InvoiceRepository;
 import com.nhatro.app.data.repository.Resource;
 import java.util.List;
+import java.util.Map;
 
 public class InvoiceViewModel extends AndroidViewModel {
     private final InvoiceRepository repository;
@@ -56,6 +57,10 @@ public class InvoiceViewModel extends AndroidViewModel {
         return repository.getInvoiceById(id);
     }
 
+    public LiveData<Resource<List<Invoice>>> checkExistingInvoice(Long contractId, Integer month, Integer year) {
+        return repository.getInvoices(null, contractId, month, year);
+    }
+
     public LiveData<Resource<Invoice>> createInvoice(CreateInvoiceRequest request) {
         return repository.createInvoice(request);
     }
@@ -66,5 +71,17 @@ public class InvoiceViewModel extends AndroidViewModel {
 
     public LiveData<Resource<Void>> deleteInvoice(Long id) {
         return repository.deleteInvoice(id);
+    }
+
+    public LiveData<Resource<Map<String, Object>>> bulkGenerateInvoices(Integer month, Integer year, String dueDate) {
+        return repository.bulkGenerateInvoices(month, year, dueDate);
+    }
+
+    public LiveData<Resource<com.nhatro.app.data.model.InvoiceItem>> addInvoiceItem(Long invoiceId, String description, Double quantity, Long unitPrice) {
+        return repository.addInvoiceItem(invoiceId, description, quantity, unitPrice);
+    }
+
+    public LiveData<Resource<Void>> removeInvoiceItem(Long invoiceId, Long itemId) {
+        return repository.removeInvoiceItem(invoiceId, itemId);
     }
 }

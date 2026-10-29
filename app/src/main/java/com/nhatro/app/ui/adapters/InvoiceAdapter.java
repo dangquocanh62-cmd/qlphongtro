@@ -25,7 +25,17 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceV
         void onInvoiceShare(Invoice invoice);
     }
 
+    public interface OnInvoiceCallListener {
+        void onInvoiceCall(Invoice invoice);
+    }
+
+    public interface OnInvoiceCollectListener {
+        void onInvoiceCollect(Invoice invoice);
+    }
+
     private OnInvoiceShareListener shareListener;
+    private OnInvoiceCallListener callListener;
+    private OnInvoiceCollectListener collectListener;
 
     public void setOnInvoiceClickListener(OnInvoiceClickListener listener) {
         this.listener = listener;
@@ -33,6 +43,14 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceV
 
     public void setOnInvoiceShareListener(OnInvoiceShareListener shareListener) {
         this.shareListener = shareListener;
+    }
+
+    public void setOnInvoiceCallListener(OnInvoiceCallListener callListener) {
+        this.callListener = callListener;
+    }
+
+    public void setOnInvoiceCollectListener(OnInvoiceCollectListener collectListener) {
+        this.collectListener = collectListener;
     }
 
     public void setInvoices(List<Invoice> invoices) {
@@ -82,6 +100,27 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceV
                     }
                 }
             });
+
+            binding.btnQuickCall.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    Invoice inv = invoices.get(pos);
+                    if (callListener != null) {
+                        callListener.onInvoiceCall(inv);
+                    } else if (inv.getTenantPhone() != null && !inv.getTenantPhone().isEmpty()) {
+                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_DIAL);
+                        intent.setData(android.net.Uri.parse("tel:" + inv.getTenantPhone()));
+                        itemView.getContext().startActivity(intent);
+                    }
+                }
+            });
+
+            binding.btnQuickCollect.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && collectListener != null) {
+                    collectListener.onInvoiceCollect(invoices.get(pos));
+                }
+            });
         }
 
         public void bind(Invoice invoice) {
@@ -95,6 +134,20 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceV
                 binding.tvDueDate.setText("Hạn đóng: " + DateUtils.formatDateVN(invoice.getDueDate()));
             } else {
                 binding.tvDueDate.setText("Hạn đóng: ---");
+            }
+
+            // Quick call visibility
+            if (invoice.getTenantPhone() != null && !invoice.getTenantPhone().trim().isEmpty()) {
+                binding.btnQuickCall.setVisibility(android.view.View.VISIBLE);
+            } else {
+                binding.btnQuickCall.setVisibility(android.view.View.GONE);
+            }
+
+            // Quick collect button visibility
+            if (invoice.isPaid()) {
+                binding.btnQuickCollect.setVisibility(android.view.View.GONE);
+            } else {
+                binding.btnQuickCollect.setVisibility(android.view.View.VISIBLE);
             }
 
             if (invoice.isPaid()) {

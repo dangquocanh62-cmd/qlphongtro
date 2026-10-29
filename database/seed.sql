@@ -67,7 +67,7 @@ SELECT setval('meter_readings_id_seq', (SELECT COALESCE(MAX(id), 1) FROM meter_r
 -- 8. Hóa đơn (gắn với user_id = 1)
 INSERT INTO invoices (id, user_id, contract_id, month, year, total_amount, status, due_date) VALUES
 (1, 1, 1, 10, 2024, 3742500, 'PARTIAL', '2024-11-05'),
-(2, 1, 2, 10, 2024, 4195000, 'UNPAID', '2024-11-05')
+(2, 1, 2, 10, 2024, 4425000, 'UNPAID', '2024-11-05')
 ON CONFLICT (id) DO NOTHING;
 SELECT setval('invoices_id_seq', (SELECT COALESCE(MAX(id), 1) FROM invoices));
 
@@ -80,7 +80,10 @@ INSERT INTO invoice_items (id, invoice_id, description, quantity, unit_price, am
 (5, 1, 'Rác & Vệ sinh môi trường', 1.0, 50000, 50000),
 (6, 2, 'Tiền thuê phòng tháng 10/2024', 1.0, 3500000, 3500000),
 (7, 2, 'Tiền điện (Chỉ số: 300 -> 420)', 120.0, 3500, 420000),
-(8, 2, 'Tiền nước (Chỉ số: 60 -> 71)', 11.0, 25000, 275000)
+(8, 2, 'Tiền nước (Chỉ số: 60 -> 71)', 11.0, 25000, 275000),
+(9, 2, 'Internet cáp quang', 1.0, 100000, 100000),
+(10, 2, 'Rác & Vệ sinh chung', 1.0, 50000, 50000),
+(11, 2, 'Gửi xe máy', 1.0, 80000, 80000)
 ON CONFLICT (id) DO NOTHING;
 SELECT setval('invoice_items_id_seq', (SELECT COALESCE(MAX(id), 1) FROM invoice_items));
 

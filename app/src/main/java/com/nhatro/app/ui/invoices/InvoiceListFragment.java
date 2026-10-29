@@ -19,6 +19,7 @@ import com.nhatro.app.viewmodel.InvoiceViewModel;
 public class InvoiceListFragment extends Fragment {
     private FragmentInvoiceListBinding binding;
     private InvoiceViewModel viewModel;
+    private com.nhatro.app.viewmodel.PaymentViewModel paymentViewModel;
     private InvoiceAdapter adapter;
     private String currentStatusFilter = null;
 
@@ -34,6 +35,7 @@ public class InvoiceListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(InvoiceViewModel.class);
+        paymentViewModel = new ViewModelProvider(this).get(com.nhatro.app.viewmodel.PaymentViewModel.class);
 
         setupRecyclerView();
         setupFilters();
@@ -56,9 +58,57 @@ public class InvoiceListFragment extends Fragment {
         adapter.setOnInvoiceShareListener(invoice -> {
             com.nhatro.app.utils.InvoiceExportHelper.shareInvoice(requireContext(), invoice);
         });
+        adapter.setOnInvoiceCallListener(invoice -> {
+            if (invoice.getTenantPhone() != null && !invoice.getTenantPhone().trim().isEmpty()) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(android.net.Uri.parse("tel:" + invoice.getTenantPhone().trim()));
+                startActivity(callIntent);
+            } else {
+                Toast.makeText(requireContext(), "Khách thuê chưa có số điện thoại", Toast.LENGTH_SHORT).show();
+            }
+        });
+        adapter.setOnInvoiceCollectListener(this::showQuickCollectDialog);
 
         binding.rvInvoices.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvInvoices.setAdapter(adapter);
+    }
+
+    private void showQuickCollectDialog(com.nhatro.app.data.model.Invoice invoice) {
+        if (invoice == null) return;
+
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_payment, null);
+        com.google.android.material.textfield.TextInputEditText etAmount = dialogView.findViewById(R.id.etPaymentAmount);
+        android.widget.RadioButton rbTransfer = dialogView.findViewById(R.id.rbTransfer);
+
+        // Pre-fill remaining debt amount for convenience
+        etAmount.setText(String.valueOf(invoice.getRemainingAmount()));
+
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Thu tiền - Phòng " + invoice.getRoomCode())
+                .setView(dialogView)
+                .setPositiveButton("Ghi nhận", (dialog, which) -> {
+                    String amountStr = etAmount.getText() != null ? etAmount.getText().toString().trim() : "0";
+                    long amount = amountStr.isEmpty() ? 0 : Long.parseLong(amountStr);
+
+                    if (amount <= 0) {
+                        Toast.makeText(requireContext(), "Số tiền thanh toán phải lớn hơn 0", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    String method = rbTransfer.isChecked() ? "TRANSFER" : "CASH";
+                    com.nhatro.app.data.model.Payment payment = new com.nhatro.app.data.model.Payment(invoice.getId(), amount, method, null);
+
+                    paymentViewModel.createPayment(payment).observe(getViewLifecycleOwner(), resource -> {
+                        if (resource != null && resource.isSuccess()) {
+                            Toast.makeText(requireContext(), "Ghi nhận thanh toán thành công!", Toast.LENGTH_SHORT).show();
+                            viewModel.refresh();
+                        } else if (resource != null && resource.isError()) {
+                            Toast.makeText(requireContext(), resource.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     private void setupFilters() {
@@ -76,6 +126,17 @@ public class InvoiceListFragment extends Fragment {
             }
             viewModel.filter(currentStatusFilter, null, null, null);
         });
+
+        if (getArguments() != null && getArguments().containsKey("status_filter")) {
+            String filter = getArguments().getString("status_filter");
+            if ("UNPAID".equalsIgnoreCase(filter)) {
+                binding.chipUnpaid.setChecked(true);
+            } else if ("PAID".equalsIgnoreCase(filter)) {
+                binding.chipPaid.setChecked(true);
+            } else if ("PARTIAL".equalsIgnoreCase(filter)) {
+                binding.chipPartial.setChecked(true);
+            }
+        }
     }
 
     private void observeInvoices() {

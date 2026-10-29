@@ -2,12 +2,13 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="14dp"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardCornerRadius="@dimen/radius_card"
+    app:cardElevation="0dp"
     app:strokeWidth="1dp"
     app:strokeColor="@color/divider"
     app:cardBackgroundColor="@color/surface">
@@ -18,6 +19,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Header: Tên phòng & Kỳ ghi -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -28,10 +30,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="P101 • Điện"
-                android:textColor="@color/primary_dark"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Phòng P101" />
 
             <TextView
                 android:id="@+id/tvPeriod"
@@ -42,49 +44,291 @@
                 android:background="@drawable/bg_badge_occupied"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="Tháng 10/2024"
                 android:textColor="@color/primary"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="Tháng 10/2024" />
         </RelativeLayout>
 
+        <!-- Đường kẻ phân cách thanh lịch -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="12dp"
+            android:background="@color/divider" />
+
+        <!-- 2 cột thông số: Điện & Nước -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_badge_available"
-            android:orientation="horizontal"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvOldNewValue"
+            <!-- Cột Điện -->
+            <LinearLayout
+                android:id="@+id/llElectricBox"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:text="Cũ: 215 -> Mới: 320"
-                android:textColor="@color/text_primary"
-                android:textSize="13sp" />
+                android:background="@drawable/bg_meter_sub_card"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="12dp">
 
-            <TextView
-                android:id="@+id/tvUsage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiêu thụ: 105 kWh"
-                android:textColor="@color/status_available_text"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@drawable/bg_icon_circle_amber">
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Biểu tượng điện"
+                            android:src="@drawable/ic_electric"
+                            app:tint="@color/icon_electric" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Điện"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Dữ liệu Điện khi đã ghi -->
+                <LinearLayout
+                    android:id="@+id/llElectricContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvElectricOldNew"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        tools:text="Cũ: 215 → Mới: 320" />
+
+                    <TextView
+                        android:id="@+id/tvElectricUsage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="Dùng: 105 kWh" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/tvElectricCost"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="367.500 đ" />
+                </LinearLayout>
+
+                <!-- Trạng thái khi chưa ghi Điện -->
+                <LinearLayout
+                    android:id="@+id/llElectricEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_meter_empty_badge"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Chưa ghi số điện"
+                        android:textColor="#B45309"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Cột Nước -->
+            <LinearLayout
+                android:id="@+id/llWaterBox"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_meter_sub_card"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@drawable/bg_icon_circle_blue">
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Biểu tượng nước"
+                            android:src="@drawable/ic_water"
+                            app:tint="@color/icon_water" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Nước"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Dữ liệu Nước khi đã ghi -->
+                <LinearLayout
+                    android:id="@+id/llWaterContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvWaterOldNew"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        tools:text="Cũ: 45 → Mới: 53" />
+
+                    <TextView
+                        android:id="@+id/tvWaterUsage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="Dùng: 8 m³" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/tvWaterCost"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="120.000 đ" />
+                </LinearLayout>
+
+                <!-- Trạng thái khi chưa ghi Nước -->
+                <LinearLayout
+                    android:id="@+id/llWaterEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_meter_empty_badge"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Chưa ghi số nước"
+                        android:textColor="#B45309"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
         </LinearLayout>
 
+        <!-- Dòng tổng kết tiền điện & nước -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="Tổng tiền điện nước:"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvTotalCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/primary_dark"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="487.500 đ" />
+        </RelativeLayout>
+
+        <!-- Giữ lại các ID cũ để tương thích 100% -->
         <TextView
-            android:id="@+id/tvTotalCost"
+            android:id="@+id/tvOldNewValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Thành tiền: 367.500 đ"
-            android:textColor="@color/primary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvUsage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

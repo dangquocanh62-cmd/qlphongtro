@@ -36,7 +36,7 @@
                 android:layout_marginTop="12dp"
                 android:text="ĐĂNG KÝ TÀI KHOẢN"
                 android:textColor="@color/text_white"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:letterSpacing="0.04"
                 android:textStyle="bold" />
 
@@ -46,8 +46,8 @@
                 android:layout_marginTop="4dp"
                 android:gravity="center"
                 android:text="Khởi tạo không gian quản lý nhà trọ của riêng bạn"
-                android:textColor="#BFDBFE"
-                android:textSize="13sp" />
+                android:textColor="@color/text_on_gradient_muted"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <!-- Main Card Form Container -->
@@ -56,8 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="-24dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="0dp"
             app:strokeColor="@color/divider"
             app:strokeWidth="1dp"
             app:cardBackgroundColor="@color/surface">
@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:text="Thông tin Chủ trọ"
                     android:textColor="@color/text_primary"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -82,7 +82,7 @@
                     android:layout_marginTop="4dp"
                     android:text="Tài khoản mới sẽ có danh sách phòng riêng và các dịch vụ mẫu"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
 
                 <!-- Họ và tên -->
                 <com.google.android.material.textfield.TextInputLayout
@@ -104,7 +104,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName|textCapWords"
-                        android:text="Trần Anh Tuấn"
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,7 +127,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="phone"
-                        android:text="0988776655"
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -152,7 +150,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:text="anhtuan.tro@gmail.com"
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -177,7 +174,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:text="123456"
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -202,7 +198,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:text="123456"
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -223,10 +218,10 @@
                     android:backgroundTint="@color/primary"
                     android:text="ĐĂNG KÝ &amp; VÀO HỆ THỐNG"
                     android:textColor="@color/text_white"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    app:cornerRadius="14dp"
-                    app:elevation="3dp" />
+                    app:cornerRadius="@dimen/radius_button"
+                    app:elevation="0dp" />
 
                 <!-- Quay lại đăng nhập -->
                 <LinearLayout

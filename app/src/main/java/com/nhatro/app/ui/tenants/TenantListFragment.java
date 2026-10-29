@@ -64,6 +64,13 @@ public class TenantListFragment extends Fragment {
                     })
                     .show();
         });
+        adapter.setOnTenantCallListener(tenant -> {
+            if (tenant.getPhone() != null && !tenant.getPhone().trim().isEmpty()) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(android.net.Uri.parse("tel:" + tenant.getPhone().trim()));
+                startActivity(callIntent);
+            }
+        });
 
         binding.rvTenants.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvTenants.setAdapter(adapter);

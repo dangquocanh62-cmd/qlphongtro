@@ -13,9 +13,56 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 import com.nhatro.app.data.model.Invoice;
 import com.nhatro.app.data.model.InvoiceItem;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.Locale;
 
 public class InvoiceExportHelper {
+
+    /**
+     * Chuyển đổi tên ngân hàng người dùng nhập sang mã chuẩn VietQR (NAPAS 247)
+     */
+    public static String getBankCode(String bankName) {
+        if (bankName == null) return "MB";
+        String upper = bankName.trim().toUpperCase();
+        if (upper.contains("VIETCOM") || upper.contains("VCB")) return "VCB";
+        if (upper.contains("TECHCOM") || upper.contains("TCB")) return "TCB";
+        if (upper.contains("VIETIN") || upper.contains("ICB") || upper.contains("CTG")) return "ICB";
+        if (upper.contains("BIDV")) return "BIDV";
+        if (upper.contains("AGRI") || upper.contains("VBA")) return "VBA";
+        if (upper.contains("MB") || upper.contains("QUAN DOI")) return "MB";
+        if (upper.contains("ACB")) return "ACB";
+        if (upper.contains("VP") || upper.contains("VPB")) return "VPB";
+        if (upper.contains("TP") || upper.contains("TPB") || upper.contains("TIEN PHONG")) return "TPB";
+        if (upper.contains("VIB")) return "VIB";
+        if (upper.contains("SACOM") || upper.contains("STB")) return "STB";
+        if (upper.contains("SHB")) return "SHB";
+        if (upper.contains("OCB")) return "OCB";
+        if (upper.contains("MSB") || upper.contains("HANG HAI")) return "MSB";
+        if (upper.contains("HDBANK") || upper.contains("HDB")) return "HDB";
+        String cleaned = upper.replaceAll("[^A-Z0-9]", "");
+        return cleaned.isEmpty() ? "MB" : cleaned;
+    }
+
+    /**
+     * Tạo đường dẫn ảnh mã VietQR (chuẩn NAPAS 247) tự động điền số tiền và nội dung
+     */
+    public static String generateVietQrUrl(String bankName, String bankAccount, long amount, String content, String accountName) {
+        if (bankAccount == null || bankAccount.trim().isEmpty()) return "";
+        String bankCode = getBankCode(bankName);
+        String cleanAccount = bankAccount.replaceAll("\\s+", "");
+        try {
+            String encodedContent = URLEncoder.encode(content != null ? content : "", "UTF-8");
+            String encodedName = URLEncoder.encode(accountName != null ? accountName : "", "UTF-8");
+            return String.format(Locale.US,
+                    "https://img.vietqr.io/image/%s-%s-compact2.png?amount=%d&addInfo=%s&accountName=%s",
+                    bankCode, cleanAccount, amount, encodedContent, encodedName);
+        } catch (Exception e) {
+            return String.format(Locale.US,
+                    "https://img.vietqr.io/image/%s-%s-compact2.png?amount=%d",
+                    bankCode, cleanAccount, amount);
+        }
+    }
 
     /**
      * Tạo văn bản hóa đơn chuẩn để gửi qua Zalo, SMS, Messenger
@@ -26,15 +73,15 @@ public class InvoiceExportHelper {
         SharedPrefsHelper prefs = SharedPrefsHelper.getInstance(context);
         StringBuilder sb = new StringBuilder();
 
-        sb.append("📋 HÓA ĐƠN TIỀN TRỌ - PHÒNG ").append(invoice.getRoomCode()).append("\n");
+        sb.append("HÓA ĐƠN TIỀN TRỌ - PHÒNG ").append(invoice.getRoomCode()).append("\n");
         sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-        sb.append("📅 Kỳ thanh toán: Tháng ").append(invoice.getMonth()).append("/").append(invoice.getYear()).append("\n");
-        sb.append("👤 Khách thuê: ").append(invoice.getTenantName());
+        sb.append("Kỳ thanh toán: Tháng ").append(invoice.getMonth()).append("/").append(invoice.getYear()).append("\n");
+        sb.append("Khách thuê: ").append(invoice.getTenantName());
         if (invoice.getTenantPhone() != null && !invoice.getTenantPhone().isEmpty()) {
             sb.append(" (").append(invoice.getTenantPhone()).append(")");
         }
         sb.append("\n");
-        sb.append("⏰ Hạn nộp tiền: ").append(DateUtils.formatDateVN(invoice.getDueDate())).append("\n");
+        sb.append("Hạn nộp tiền: ").append(DateUtils.formatDateVN(invoice.getDueDate())).append("\n");
         sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
         sb.append("CHI TIẾT CÁC KHOẢN THU:\n");
 
@@ -55,11 +102,11 @@ public class InvoiceExportHelper {
         }
 
         sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-        sb.append("💰 TỔNG CỘNG: ").append(CurrencyUtils.formatVND(invoice.getTotalAmount())).append("\n");
+        sb.append("TỔNG CỘNG: ").append(CurrencyUtils.formatVND(invoice.getTotalAmount())).append("\n");
         if (invoice.getPaidAmount() > 0) {
-            sb.append("✅ Đã thanh toán: ").append(CurrencyUtils.formatVND(invoice.getPaidAmount())).append("\n");
+            sb.append("Đã thanh toán: ").append(CurrencyUtils.formatVND(invoice.getPaidAmount())).append("\n");
         }
-        sb.append("⚠️ CÒN LẠI CẦN NỘP: ").append(CurrencyUtils.formatVND(invoice.getRemainingAmount())).append("\n");
+        sb.append("CÒN LẠI CẦN NỘP: ").append(CurrencyUtils.formatVND(invoice.getRemainingAmount())).append("\n");
 
         // Thông tin thanh toán / chuyển khoản ngân hàng
         String bankName = prefs.getBankName();
@@ -68,7 +115,7 @@ public class InvoiceExportHelper {
 
         if (!bankAccount.isEmpty()) {
             sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            sb.append("💳 THÔNG TIN CHUYỂN KHOẢN:\n");
+            sb.append("THÔNG TIN CHUYỂN KHOẢN:\n");
             if (!bankName.isEmpty()) {
                 sb.append("• Ngân hàng: ").append(bankName).append("\n");
             }
@@ -76,7 +123,14 @@ public class InvoiceExportHelper {
             if (!bankOwner.isEmpty()) {
                 sb.append("• Chủ tài khoản: ").append(bankOwner).append("\n");
             }
-            sb.append("• Nội dung CK: ").append(invoice.getRoomCode()).append(" tien nha T").append(invoice.getMonth()).append("\n");
+            String transferContent = invoice.getRoomCode() + " tien nha T" + invoice.getMonth();
+            sb.append("• Nội dung CK: ").append(transferContent).append("\n");
+
+            long payAmount = invoice.getRemainingAmount() > 0 ? invoice.getRemainingAmount() : invoice.getTotalAmount();
+            String qrUrl = generateVietQrUrl(bankName, bankAccount, payAmount, transferContent, bankOwner);
+            if (!qrUrl.isEmpty()) {
+                sb.append("Quét mã VietQR thanh toán nhanh: ").append(qrUrl).append("\n");
+            }
         }
 
         sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
@@ -167,12 +221,24 @@ public class InvoiceExportHelper {
 
         String bankBox = "";
         if (!bankAccount.isEmpty()) {
+            String transferContent = invoice.getRoomCode() + " tien nha T" + invoice.getMonth();
+            long payAmount = invoice.getRemainingAmount() > 0 ? invoice.getRemainingAmount() : invoice.getTotalAmount();
+            String qrUrl = generateVietQrUrl(bankName, bankAccount, payAmount, transferContent, bankOwner);
+
             bankBox = "<div style='margin-top:20px; padding:12px 16px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; font-size:13px;'>"
-                    + "<b style='color:#0f172a;'>💳 THÔNG TIN CHUYỂN KHOẢN:</b><br/>"
+                    + "<div style='display:table; width:100%;'>"
+                    + "  <div style='display:table-cell; vertical-align:middle; padding-right:12px;'>"
+                    + "    <b style='color:#0f172a;'>THÔNG TIN CHUYỂN KHOẢN:</b><br/>"
                     + (bankName.isEmpty() ? "" : ("• <b>Ngân hàng:</b> " + bankName + "<br/>"))
                     + "• <b>Số tài khoản:</b> <span style='font-family:monospace; font-weight:bold; font-size:15px; color:#2563eb;'>" + bankAccount + "</span><br/>"
                     + (bankOwner.isEmpty() ? "" : ("• <b>Chủ tài khoản:</b> " + bankOwner + "<br/>"))
-                    + "• <b>Cú pháp chuyển khoản:</b> <span style='background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:bold;'>" + invoice.getRoomCode() + " tien nha T" + invoice.getMonth() + "</span>"
+                    + "• <b>Cú pháp chuyển khoản:</b> <span style='background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:bold;'>" + transferContent + "</span>"
+                    + "  </div>"
+                    + "  <div style='display:table-cell; width:130px; text-align:center; vertical-align:middle; border-left:1px dashed #cbd5e1; padding-left:12px;'>"
+                    + "    <img src='" + qrUrl + "' alt='VietQR' style='width:110px; height:auto; border-radius:6px; border:1px solid #cbd5e1;' /><br/>"
+                    + "    <span style='font-size:10px; color:#64748b; font-weight:bold;'>Quét VietQR NAPAS</span>"
+                    + "  </div>"
+                    + "</div>"
                     + "</div>";
         }
 

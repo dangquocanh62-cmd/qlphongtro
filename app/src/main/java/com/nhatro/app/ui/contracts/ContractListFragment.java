@@ -38,6 +38,11 @@ public class ContractListFragment extends Fragment {
         setupFilters();
         observeContracts();
 
+        if (getArguments() != null && getArguments().getBoolean("filter_expiring", false)) {
+            binding.chipExpiringContracts.setChecked(true);
+            viewModel.filterExpiring();
+        }
+
         binding.swipeRefresh.setOnRefreshListener(() -> viewModel.refresh());
 
         binding.fabAddContract.setOnClickListener(v ->
@@ -52,6 +57,15 @@ public class ContractListFragment extends Fragment {
             intent.putExtra("contract_id", contract.getId());
             startActivity(intent);
         });
+        adapter.setOnContractCallListener(contract -> {
+            if (contract.getTenantPhone() != null && !contract.getTenantPhone().trim().isEmpty()) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(android.net.Uri.parse("tel:" + contract.getTenantPhone().trim()));
+                startActivity(callIntent);
+            } else {
+                Toast.makeText(requireContext(), "Khách thuê chưa có số điện thoại", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         binding.rvContracts.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvContracts.setAdapter(adapter);
@@ -63,6 +77,8 @@ public class ContractListFragment extends Fragment {
             int checkedId = checkedIds.get(0);
             if (checkedId == R.id.chipActiveContracts) {
                 viewModel.filterByStatus("ACTIVE");
+            } else if (checkedId == R.id.chipExpiringContracts) {
+                viewModel.filterExpiring();
             } else if (checkedId == R.id.chipEndedContracts) {
                 viewModel.filterByStatus("ENDED");
             } else {
