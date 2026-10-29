@@ -21,7 +21,8 @@
             app:titleTextColor="@color/text_white" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -418,24 +419,56 @@
                                 android:id="@+id/btnCopyAccountNo"
                                 style="@style/Widget.Material3.Button.OutlinedButton"
                                 android:layout_width="0dp"
-                                android:layout_height="44dp"
+                                android:layout_height="40dp"
                                 android:layout_weight="1"
-                                android:layout_marginEnd="6dp"
+                                android:layout_marginEnd="5dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:paddingHorizontal="6dp"
+                                android:paddingVertical="0dp"
+                                android:gravity="center"
                                 android:text="Sao chép STK"
                                 android:textColor="@color/primary"
                                 android:textSize="12sp"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                app:autoSizeTextType="uniform"
+                                app:autoSizeMinTextSize="9sp"
+                                app:autoSizeMaxTextSize="12sp"
+                                app:icon="@drawable/ic_content_copy"
+                                app:iconSize="14dp"
+                                app:iconPadding="4dp"
+                                app:iconTint="@color/primary"
+                                app:iconGravity="textStart"
+                                app:strokeColor="@color/primary"
                                 app:cornerRadius="@dimen/radius_button" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnCopyContent"
                                 style="@style/Widget.Material3.Button.OutlinedButton"
                                 android:layout_width="0dp"
-                                android:layout_height="44dp"
+                                android:layout_height="40dp"
                                 android:layout_weight="1"
-                                android:layout_marginStart="6dp"
+                                android:layout_marginStart="5dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:paddingHorizontal="6dp"
+                                android:paddingVertical="0dp"
+                                android:gravity="center"
                                 android:text="Sao chép nội dung"
                                 android:textColor="@color/primary"
                                 android:textSize="12sp"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                app:autoSizeTextType="uniform"
+                                app:autoSizeMinTextSize="9sp"
+                                app:autoSizeMaxTextSize="12sp"
+                                app:icon="@drawable/ic_content_copy"
+                                app:iconSize="14dp"
+                                app:iconPadding="4dp"
+                                app:iconTint="@color/primary"
+                                app:iconGravity="textStart"
+                                app:strokeColor="@color/primary"
                                 app:cornerRadius="@dimen/radius_button" />
                         </LinearLayout>
 
@@ -516,5 +549,5 @@
                 app:cornerRadius="@dimen/radius_button" />
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
